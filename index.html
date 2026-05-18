@@ -38,6 +38,9 @@
       --ink:#1a2230;
       --muted:#5a6677;
       --white:#FFFFFF;
+      --amber:#FFB37C;
+      --green:#7CFFB2;
+      --red:#FF8B8B;
       --glass-bg:rgba(255,255,255,0.08);
       --glass-bg-strong:rgba(255,255,255,0.14);
       --glass-border:rgba(255,255,255,0.18);
@@ -53,9 +56,9 @@
 
     /* ========== TYPOGRAPHY ========== */
     h1,h2,h3,h4{font-family:'Inter',sans-serif;letter-spacing:-0.025em;line-height:1.05;margin:0;font-weight:800}
-    h1{font-size:clamp(44px,7vw,96px)}
-    h2{font-size:clamp(34px,5vw,64px)}
-    h3{font-size:clamp(22px,2.4vw,30px)}
+    h1{font-size:clamp(40px,7vw,96px)}
+    h2{font-size:clamp(30px,5vw,60px)}
+    h3{font-size:clamp(20px,2.4vw,28px)}
     p{margin:0;color:var(--muted);font-size:16px;line-height:1.65}
     .overline{
       font-family:'JetBrains Mono',ui-monospace,monospace;
@@ -69,19 +72,25 @@
     }
     .accent-blue{color:var(--blue)}
     .text-white{color:var(--white)}
-    .text-muted-w{color:rgba(255,255,255,.78)}
 
     /* ========== LAYOUT ========== */
     .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
     section{position:relative;padding:120px 0;overflow:hidden}
-    @media (max-width:768px){section{padding:80px 0}}
+    @media (max-width:768px){section{padding:72px 0}}
+
+    /* ========== SCROLL PROGRESS BAR ========== */
+    .progress-bar{
+      position:fixed;top:0;left:0;height:3px;width:0%;z-index:200;
+      background:linear-gradient(90deg,#7FCBFF,#1B9EFF,#0A6FCC);
+      transition:width .1s linear;box-shadow:0 0 10px rgba(27,158,255,.5);
+    }
 
     /* ========== SCROLL REVEAL ========== */
     .reveal{opacity:0;transform:translateY(30px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
     .reveal.in{opacity:1;transform:translateY(0)}
-    .reveal-l{opacity:0;transform:translateX(-40px) translateY(0);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+    .reveal-l{opacity:0;transform:translateX(-40px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
     .reveal-l.in{opacity:1;transform:translateX(0)}
-    .reveal-r{opacity:0;transform:translateX(40px) translateY(0);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+    .reveal-r{opacity:0;transform:translateX(40px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
     .reveal-r.in{opacity:1;transform:translateX(0)}
     .reveal-scale{opacity:0;transform:scale(.92);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
     .reveal-scale.in{opacity:1;transform:scale(1)}
@@ -108,7 +117,7 @@
     .nav{
       position:fixed;top:16px;left:50%;transform:translateX(-50%);
       width:min(var(--maxw),calc(100% - 32px));z-index:100;
-      padding:14px 22px;display:flex;align-items:center;justify-content:space-between;
+      padding:12px 22px;display:flex;align-items:center;justify-content:space-between;
       border-radius:999px;
       background:rgba(255,255,255,0.7);
       backdrop-filter:blur(20px) saturate(180%);
@@ -120,7 +129,7 @@
     .nav.scrolled{background:rgba(255,255,255,0.92);box-shadow:0 12px 40px rgba(13,17,23,.08)}
     .nav-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;color:var(--blue)}
     .nav-logo svg{width:30px;height:30px}
-    .nav-links{display:flex;align-items:center;gap:26px}
+    .nav-links{display:flex;align-items:center;gap:24px}
     .nav-links a{font-size:14px;color:var(--ink);font-weight:500;transition:.2s}
     .nav-links a:hover{color:var(--blue)}
     .nav-cta{
@@ -130,11 +139,31 @@
       box-shadow:0 6px 18px rgba(27,158,255,.4);transition:.2s;
     }
     .nav-cta:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(27,158,255,.55)}
-    @media (max-width:720px){.nav-links a{display:none}}
+    .nav-burger{display:none;width:38px;height:38px;border:0;background:transparent;cursor:pointer;align-items:center;justify-content:center;border-radius:50%}
+    .nav-burger svg{width:22px;height:22px;color:var(--ink)}
+    .nav-burger:hover{background:rgba(0,0,0,.05)}
+
+    .mobile-menu{
+      position:fixed;top:80px;left:16px;right:16px;z-index:99;
+      background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      border:1px solid rgba(255,255,255,.5);border-radius:20px;
+      padding:20px;box-shadow:0 20px 50px rgba(13,17,23,.12);
+      display:flex;flex-direction:column;gap:14px;
+      transform:translateY(-20px);opacity:0;pointer-events:none;transition:.3s;
+    }
+    .mobile-menu.open{transform:translateY(0);opacity:1;pointer-events:auto}
+    .mobile-menu a{padding:10px 14px;font-weight:500;color:var(--ink);border-radius:10px;font-size:15px}
+    .mobile-menu a:hover{background:rgba(27,158,255,.08)}
+
+    @media (max-width:840px){
+      .nav-links{display:none}
+      .nav-burger{display:inline-flex}
+      .nav-cta{display:none}
+    }
 
     /* ========== HERO ========== */
     .hero{
-      min-height:100vh;display:grid;place-items:center;padding:140px 0 90px;
+      min-height:100vh;display:grid;place-items:center;padding:130px 0 90px;
       background:linear-gradient(160deg,#0A6FCC 0%,#1B9EFF 50%,#5AB8FF 100%);
       position:relative;color:#fff;overflow:hidden;isolation:isolate;
     }
@@ -150,15 +179,15 @@
     }
     canvas#particles{position:absolute;inset:0;z-index:-1;width:100%;height:100%;pointer-events:none}
 
-    .hero-inner{position:relative;text-align:center;width:100%}
+    .hero-inner{position:relative;text-align:center;width:100%;z-index:2}
     .hero-chip{
       display:inline-flex;align-items:center;gap:10px;padding:8px 16px;border-radius:999px;
       background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
       backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-      font-size:13px;font-weight:500;margin-bottom:34px;letter-spacing:.02em;
+      font-size:13px;font-weight:500;margin-bottom:32px;letter-spacing:.02em;
       opacity:0;transform:translateY(20px);animation:rise .9s .15s forwards cubic-bezier(.2,.7,.2,1);
     }
-    .hero-chip .dot{width:8px;height:8px;border-radius:50%;background:#7CFFB2;box-shadow:0 0 12px #7CFFB2;animation:pulse 2s ease-in-out infinite}
+    .hero-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green);animation:pulse 2s ease-in-out infinite}
     @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(.85)}}
 
     .hero h1{font-weight:900;letter-spacing:-.035em;line-height:.98}
@@ -168,8 +197,7 @@
     .hero h1 .line:nth-child(2) span{animation-delay:.45s}
     @keyframes riseLine{to{transform:translateY(0);opacity:1}}
     @keyframes rise{to{transform:translateY(0);opacity:1}}
-    .hero h1 .line-1 span{color:rgba(255,255,255,.48)}
-    .hero h1 .line-2 span{color:#fff;-webkit-text-fill-color:#fff}
+    .hero h1 .line-2 span{background:linear-gradient(135deg,#ffffff 0%,#BFE3FF 50%,#7FCBFF 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 40px rgba(255,255,255,.2)}
 
     .hero-sub{
       max-width:640px;margin:28px auto 0;font-size:clamp(16px,1.6vw,20px);color:rgba(255,255,255,.88);
@@ -181,7 +209,7 @@
     }
     .btn{
       display:inline-flex;align-items:center;gap:10px;padding:16px 28px;border-radius:999px;
-      font-weight:600;font-size:15px;border:0;transition:.25s;cursor:pointer;
+      font-weight:600;font-size:15px;border:0;transition:transform .25s,box-shadow .25s,background .25s;cursor:pointer;
     }
     .btn-primary{
       background:#fff;color:var(--blue-deep);box-shadow:0 12px 32px rgba(0,0,0,.18);
@@ -205,20 +233,50 @@
       margin-top:42px;display:inline-flex;align-items:center;gap:14px;padding:12px 22px;border-radius:999px;
       background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);
       backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font-size:14px;
-      opacity:0;animation:rise .9s 1.2s forwards cubic-bezier(.2,.7,.2,1);
+      opacity:0;animation:rise .9s 1.2s forwards cubic-bezier(.2,.7,.2,1);transition:.4s;
     }
-    .hero-seats .pulse{width:9px;height:9px;border-radius:50%;background:#FFB37C;box-shadow:0 0 12px #FFB37C;animation:pulse 1.8s ease-in-out infinite}
-    .hero-seats b{font-weight:700;color:#fff}
+    .hero-seats.warning{background:rgba(255,179,124,.15);border-color:rgba(255,179,124,.4)}
+    .hero-seats .pulse{width:9px;height:9px;border-radius:50%;background:var(--amber);box-shadow:0 0 12px var(--amber);animation:pulse 1.8s ease-in-out infinite}
+    .hero-seats b{font-weight:700;color:#fff;display:inline-block;min-width:32px;text-align:center}
+    .hero-seats b.tick{animation:tickFlash .6s ease}
+    @keyframes tickFlash{0%{transform:scale(1);color:#fff}50%{transform:scale(1.25);color:var(--amber)}100%{transform:scale(1);color:#fff}}
 
+    /* ========== INTERACTIVE GHOST ========== */
     .hero-ghost{
-      position:absolute;right:-40px;top:30%;width:280px;opacity:.22;pointer-events:none;
-      transition:transform .12s ease-out;will-change:transform;
+      position:absolute;right:-20px;top:18%;width:340px;height:340px;
+      opacity:.32;pointer-events:none;will-change:transform;
+      transition:transform .2s ease-out,opacity .3s;
     }
+    .hero-ghost svg{width:100%;height:100%;overflow:visible}
+    .hero-ghost .ghost-body{transition:transform .3s}
+    .hero-ghost.peek .ghost-body{animation:happyBounce 1.2s cubic-bezier(.2,.7,.2,1)}
+    @keyframes happyBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+    .pupil{transition:transform .15s ease-out;transform-box:fill-box;transform-origin:center}
+    .eyelid{transform-origin:center;transform-box:fill-box;transform:scaleY(0);transition:transform .12s ease}
+    .hero-ghost.blink .eyelid{transform:scaleY(1)}
+    .ghost-mouth{transition:d .25s ease}
+    .hero-ghost.grin .ghost-mouth{stroke-width:3.5}
     @media (max-width:900px){.hero-ghost{display:none}}
+
+    /* idle peek ghost */
+    .hero-peek{
+      position:absolute;left:8px;bottom:0;width:80px;height:80px;
+      opacity:0;transform:translateY(60px);transition:.5s cubic-bezier(.2,.7,.2,1);
+      pointer-events:none;z-index:3;
+    }
+    .hero-peek.show{opacity:.7;transform:translateY(0)}
+    .hero-peek svg{width:100%;color:#fff}
+    .peek-tip{
+      position:absolute;left:90px;bottom:30px;
+      padding:6px 12px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);
+      border-radius:12px;font-size:12px;color:#fff;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+      white-space:nowrap;
+    }
 
     .scroll-cue{
       position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
       display:flex;flex-direction:column;align-items:center;gap:8px;color:rgba(255,255,255,.7);font-size:11px;letter-spacing:.2em;
+      z-index:2;
     }
     .scroll-cue .chev{width:24px;height:36px;border:2px solid rgba(255,255,255,.5);border-radius:14px;position:relative}
     .scroll-cue .chev::after{
@@ -227,7 +285,7 @@
     }
     @keyframes wheel{0%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,14px)}}
 
-    /* ========== SECTION DECORATION (white bg blobs) ========== */
+    /* ========== SECTION DECO ========== */
     .deco-blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.18;pointer-events:none;z-index:0}
     .deco-blue{background:var(--blue)}
     .deco-deep{background:var(--blue-deep)}
@@ -236,37 +294,66 @@
     /* ========== PROBLEM ========== */
     .problem .grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:50px}
     @media (max-width:780px){.problem .grid{grid-template-columns:1fr}}
-    .problem-card{padding:36px;border-radius:var(--radius);position:relative;transition:.3s;transform-style:preserve-3d}
+    .problem-card{padding:36px;border-radius:var(--radius);position:relative;transition:.3s}
     .problem-card::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--blue-deep));border-radius:var(--radius) var(--radius) 0 0}
     .problem-card .tag{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue);letter-spacing:.2em;font-weight:600}
     .problem-card h3{margin:14px 0 12px;color:var(--black)}
     .problem-card p{font-size:15.5px;color:var(--muted)}
+    .problem-card .stat{margin-top:18px;padding:12px 16px;background:var(--blue-light);border-radius:12px;font-size:13.5px;color:var(--blue-deep);font-weight:600}
     .problem-card.left:hover{transform:perspective(800px) rotateY(3deg) translateY(-4px)}
     .problem-card.right:hover{transform:perspective(800px) rotateY(-3deg) translateY(-4px)}
 
-    /* ========== WHAT WE ARE ========== */
+    /* ========== ANSWER ========== */
     .answer{background:linear-gradient(160deg,#0A6FCC 0%,#1565B8 60%,#0d3b75 100%);color:#fff}
     .answer h2{color:#fff;max-width:900px}
     .answer .chips{margin-top:36px;display:flex;flex-wrap:wrap;gap:12px}
     .answer .chip{
       padding:10px 22px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);
-      font-weight:500;font-size:15px;position:relative;
+      font-weight:500;font-size:15px;position:relative;color:rgba(255,255,255,.65);
       opacity:0;transform:translateY(15px);
     }
     .answer .chip.in{animation:chipIn .6s forwards cubic-bezier(.2,.7,.2,1)}
     .answer .chip:nth-child(1){animation-delay:0s}
     .answer .chip:nth-child(2){animation-delay:.15s}
     .answer .chip:nth-child(3){animation-delay:.3s}
-    @keyframes chipIn{to{opacity:.5;transform:translateY(0)}}
+    @keyframes chipIn{to{opacity:1;transform:translateY(0)}}
     .answer .chip span{position:relative}
     .answer .chip span::after{
       content:"";position:absolute;left:-4px;right:-4px;top:50%;height:2px;background:#FF6B6B;
       transform:scaleX(0);transform-origin:left;transition:transform .6s .3s cubic-bezier(.2,.7,.2,1);
     }
     .answer .chip.in span::after{transform:scaleX(1)}
+    .answer .we-are{margin-top:28px;display:flex;flex-wrap:wrap;gap:12px}
+    .answer .we-are .chip{background:rgba(124,255,178,.12);border-color:rgba(124,255,178,.32);color:#fff}
+    .answer .we-are .chip span::after{display:none}
     .answer p.lead{max-width:760px;margin-top:30px;font-size:18px;color:rgba(255,255,255,.85);line-height:1.7}
 
-    /* ========== TIMELINE / HOW ========== */
+    /* ========== FUNNEL VIZ ========== */
+    .funnel-sec{background:linear-gradient(165deg,#fff 0%,#EBF5FF 100%)}
+    .funnel-sec h2{color:var(--black)}
+    .funnel-grid{margin-top:60px;display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center}
+    @media (max-width:900px){.funnel-grid{grid-template-columns:1fr;gap:32px}}
+    .funnel-svg-wrap{position:relative}
+    .funnel-svg{width:100%;max-width:520px;margin:0 auto;display:block;overflow:visible}
+    .funnel-layer{transition:.7s cubic-bezier(.2,.7,.2,1);transform-origin:center;cursor:pointer}
+    .funnel-layer .shape{fill:rgba(27,158,255,.12);stroke:var(--blue);stroke-width:2;stroke-dasharray:1200;stroke-dashoffset:1200;transition:stroke-dashoffset 1.4s cubic-bezier(.2,.7,.2,1)}
+    .funnel-svg.in .funnel-layer .shape{stroke-dashoffset:0}
+    .funnel-svg.in .funnel-layer .shape{fill:url(#fgrad)}
+    .funnel-layer:hover .shape{stroke-width:3;filter:drop-shadow(0 6px 20px rgba(27,158,255,.4))}
+    .funnel-label{font-family:'Inter';font-weight:800;font-size:22px;fill:#fff;text-anchor:middle;letter-spacing:-.02em}
+    .funnel-sublabel{font-family:'JetBrains Mono';font-size:10.5px;fill:rgba(255,255,255,.85);text-anchor:middle;letter-spacing:.16em;text-transform:uppercase}
+    .funnel-side{display:flex;flex-direction:column;gap:18px}
+    .funnel-step{
+      padding:18px 20px;border-radius:14px;background:rgba(255,255,255,.7);border:1px solid rgba(27,158,255,.15);
+      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+      display:grid;grid-template-columns:48px 1fr;gap:14px;align-items:center;transition:.25s;
+    }
+    .funnel-step:hover{background:#fff;transform:translateX(4px);box-shadow:0 8px 24px rgba(27,158,255,.15)}
+    .funnel-step .n{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue-deep));color:#fff;display:grid;place-items:center;font-weight:800;font-size:16px;box-shadow:0 6px 16px rgba(27,158,255,.35)}
+    .funnel-step h4{margin:0 0 4px;color:var(--black);font-size:15.5px;font-weight:700}
+    .funnel-step p{font-size:13.5px;color:var(--muted);line-height:1.5}
+
+    /* ========== HOW IT WORKS / TIMELINE ========== */
     .how-timeline{margin-top:60px;position:relative;display:grid;gap:28px}
     .how-timeline::before{
       content:"";position:absolute;left:36px;top:30px;bottom:30px;width:2px;
@@ -278,35 +365,46 @@
       background:linear-gradient(135deg,var(--blue),var(--blue-deep));box-shadow:var(--shadow-glow);
       position:relative;z-index:2;
     }
-    .step-num::before{
-      content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--blue);opacity:0;
-      animation:ring 2.4s ease-out infinite;
-    }
+    .step-num::before{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--blue);opacity:0;animation:ring 2.4s ease-out infinite}
     .step:hover .step-num::before{opacity:.6}
     @keyframes ring{0%{transform:scale(.8);opacity:.6}100%{transform:scale(1.4);opacity:0}}
     .step-body{padding:24px 28px;border-radius:var(--radius);transition:.3s}
     .step-body:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
-    .step-body h3{margin:0 0 8px;color:var(--black)}
+    .step-body h3{margin:0 0 6px;color:var(--black)}
+    .step-body .duration{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--blue);letter-spacing:.18em;text-transform:uppercase;font-weight:600;margin-bottom:8px}
     .step-body p{font-size:15.5px}
 
+    /* ========== COMPARISON TABLE ========== */
+    .compare{background:#fff;position:relative}
+    .compare-wrap{margin-top:48px;overflow-x:auto;border-radius:18px;border:1px solid rgba(27,158,255,.15);box-shadow:0 10px 36px rgba(13,17,23,.04)}
+    table.compare-table{width:100%;border-collapse:collapse;min-width:720px;background:#fff}
+    .compare-table th,.compare-table td{padding:16px 18px;text-align:left;font-size:14px;border-bottom:1px solid #eef3f9}
+    .compare-table thead th{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;background:#F7FBFF}
+    .compare-table tbody td:first-child{font-weight:600;color:var(--black);font-size:14.5px}
+    .compare-table .col-us{background:linear-gradient(180deg,rgba(27,158,255,.10),rgba(27,158,255,.04));font-weight:600;color:var(--blue-deep);position:relative}
+    .compare-table thead .col-us{background:linear-gradient(180deg,var(--blue),var(--blue-deep));color:#fff;font-size:13px;letter-spacing:.18em}
+    .compare-table tbody tr:hover{background:rgba(27,158,255,.03)}
+    .check{color:var(--blue);font-weight:700}
+    .cross{color:#cbd2de;font-weight:700}
+    .compare-note{margin-top:16px;font-size:13px;color:var(--muted);font-style:italic}
+
     /* ========== NUMBERS ========== */
-    .numbers{background:linear-gradient(155deg,#1B9EFF 0%,#0A6FCC 60%,#08599f 100%);color:#fff;position:relative}
+    .numbers{background:linear-gradient(155deg,#1B9EFF 0%,#0A6FCC 60%,#08599f 100%);color:#fff;position:relative;padding:88px 0}
     .numbers h2{color:#fff}
-    .num-grid{margin-top:54px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+    .num-grid{margin-top:40px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
     @media (max-width:880px){.num-grid{grid-template-columns:repeat(2,1fr)}}
     @media (max-width:560px){.num-grid{grid-template-columns:1fr}}
     .num-card{
-      padding:32px 28px;border-radius:var(--radius);text-align:left;
-      background:rgba(255,255,255,0.08);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
-      border:1px solid rgba(255,255,255,0.18);box-shadow:0 12px 36px rgba(0,0,0,.18);
-      transition:.4s;animation:float-soft 6s ease-in-out infinite;
+      padding:20px 22px;border-radius:14px;text-align:left;
+      background:rgba(255,255,255,0.08);
+      backdrop-filter:blur(18px) saturate(180%);-webkit-backdrop-filter:blur(18px) saturate(180%);
+      border:1px solid rgba(255,255,255,0.18);box-shadow:0 6px 18px rgba(0,0,0,.12);
+      display:flex;flex-direction:column;justify-content:space-between;gap:10px;min-height:128px;
+      transition:transform .3s ease, background .3s ease, border-color .3s ease, box-shadow .3s ease;
     }
-    .num-card:nth-child(2n){animation-delay:-2s}
-    .num-card:nth-child(3n){animation-delay:-4s}
-    @keyframes float-soft{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-    .num-card:hover{background:rgba(255,255,255,0.14);transform:translateY(-10px)}
-    .num{font-size:64px;font-weight:900;line-height:1;letter-spacing:-.04em;background:linear-gradient(135deg,#fff,#BFE3FF);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-    .num-card .num-sub{margin-top:14px;font-size:14.5px;color:rgba(255,255,255,.85);line-height:1.55}
+    .num-card:hover{background:rgba(255,255,255,0.14);border-color:rgba(255,255,255,.3);transform:translateY(-3px);box-shadow:0 12px 26px rgba(0,0,0,.18)}
+    .num{font-size:40px;font-weight:900;line-height:1;letter-spacing:-.035em;background:linear-gradient(135deg,#fff,#BFE3FF);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .num-card .num-sub{font-size:13px;color:rgba(255,255,255,.82);line-height:1.45}
 
     /* ========== TRACKS ========== */
     .tracks .sub-h{max-width:720px;margin-top:18px;font-size:17px}
@@ -321,8 +419,9 @@
       transition:transform .3s, box-shadow .3s, border-color .3s;transform-style:preserve-3d;will-change:transform;
     }
     .track-card:hover{box-shadow:0 20px 50px rgba(27,158,255,.22);border-color:rgba(27,158,255,.4)}
-    .track-icon{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#1B9EFF,#0A6FCC);color:#fff;margin-bottom:18px;box-shadow:0 8px 20px rgba(27,158,255,.35)}
-    .track-icon svg{width:26px;height:26px;stroke:#fff;stroke-width:2;fill:none}
+    .track-icon{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#1B9EFF,#0A6FCC);color:#fff;margin-bottom:18px;box-shadow:0 8px 20px rgba(27,158,255,.35);transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+    .track-card:hover .track-icon{transform:rotate(-8deg) scale(1.06)}
+    .track-icon svg{width:26px;height:26px;stroke:#fff;stroke-width:2;fill:none;transition:.35s}
     .track-card h3{margin:0 0 8px;color:var(--black)}
     .track-card p{font-size:15px}
     .track-card::after{
@@ -332,7 +431,7 @@
     }
     .track-card:hover::after{opacity:1}
 
-    /* ========== WHY STUDENTS / WHY COMPANIES ========== */
+    /* ========== WHY STUDENTS / COMPANIES ========== */
     .why-students{background:linear-gradient(155deg,#0A6FCC 0%,#1B9EFF 100%);color:#fff;position:relative}
     .why-students h2{color:#fff}
     .why-students .sub-h{color:rgba(255,255,255,.82);margin-top:18px;font-size:17px;max-width:720px}
@@ -357,7 +456,29 @@
     .why-companies .why-card h3{color:var(--black)}
     .why-companies .why-card p{color:var(--muted)}
 
-    /* ========== FORM ========== */
+    /* ========== FAQ ========== */
+    .faq{background:linear-gradient(170deg,#F4F9FF 0%,#fff 100%);position:relative}
+    .faq-list{margin-top:48px;display:flex;flex-direction:column;gap:14px;max-width:880px}
+    .faq-item{
+      border-radius:16px;background:#fff;border:1px solid rgba(27,158,255,.12);
+      box-shadow:0 6px 24px rgba(13,17,23,.04);overflow:hidden;transition:.25s;
+    }
+    .faq-item.open{border-color:rgba(27,158,255,.32);box-shadow:0 14px 36px rgba(27,158,255,.12)}
+    .faq-q{
+      width:100%;padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+      background:transparent;border:0;cursor:pointer;text-align:left;color:var(--black);
+      font-size:16.5px;font-weight:600;letter-spacing:-.01em;transition:color .2s;
+    }
+    .faq-item.open .faq-q{color:var(--blue-deep)}
+    .faq-q .ico{
+      width:32px;height:32px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;
+      background:rgba(27,158,255,.1);color:var(--blue);transition:.3s;
+    }
+    .faq-item.open .faq-q .ico{transform:rotate(45deg);background:var(--blue);color:#fff}
+    .faq-a{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.2,.7,.2,1)}
+    .faq-a-inner{padding:0 24px 22px;color:var(--muted);font-size:15px;line-height:1.7;border-top:1px solid rgba(27,158,255,.08);margin-top:0;padding-top:18px}
+
+    /* ========== REGISTER (MULTI-STEP FORM) ========== */
     .register{background:linear-gradient(165deg,#1B9EFF 0%,#0A6FCC 50%,#0a3a6e 100%);color:#fff;position:relative;overflow:hidden}
     .register::before,.register::after{content:"";position:absolute;border-radius:50%;filter:blur(80px);opacity:.4}
     .register::before{width:480px;height:480px;background:#7FCBFF;top:-100px;left:-80px;animation:floatBlob 18s ease-in-out infinite}
@@ -369,41 +490,70 @@
       margin-top:24px;display:inline-flex;align-items:center;gap:12px;padding:10px 18px;border-radius:999px;
       background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);font-size:14px;
     }
-    .register .seat-bar .pulse{width:9px;height:9px;border-radius:50%;background:#FFB37C;box-shadow:0 0 10px #FFB37C;animation:pulse 1.8s ease-in-out infinite}
+    .register .seat-bar .pulse{width:9px;height:9px;border-radius:50%;background:var(--amber);box-shadow:0 0 10px var(--amber);animation:pulse 1.8s ease-in-out infinite}
 
     .form-card{
-      margin-top:48px;padding:40px;border-radius:24px;
+      margin-top:40px;padding:36px;border-radius:24px;
       background:rgba(255,255,255,0.1);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);
       border:1px solid rgba(255,255,255,0.22);box-shadow:0 30px 80px rgba(0,0,0,.28);
+      position:relative;
     }
-    @media (max-width:600px){.form-card{padding:28px 22px}}
+    @media (max-width:600px){.form-card{padding:24px 18px}}
+
+    .step-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:10px}
+    .step-meta{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.78);font-weight:600}
+    .step-time{font-size:12px;color:rgba(255,255,255,.6)}
+    .step-progress{margin:6px 0 24px;height:6px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden;border:1px solid rgba(255,255,255,.18)}
+    .step-progress .bar{height:100%;width:33.33%;background:linear-gradient(90deg,#fff,#BFE3FF);border-radius:999px;transition:width .6s cubic-bezier(.2,.7,.2,1)}
+
+    .step-panel{display:none;animation:slideIn .4s cubic-bezier(.2,.7,.2,1)}
+    .step-panel.active{display:block}
+    @keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+    .step-panel h3{color:#fff;font-size:24px;font-weight:700;margin-bottom:8px;letter-spacing:-.02em}
+    .step-panel p.lead{color:rgba(255,255,255,.78);font-size:14.5px;margin-bottom:24px}
+
     .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
     @media (max-width:680px){.form-grid{grid-template-columns:1fr}}
     .full{grid-column:1/-1}
-    .field{display:flex;flex-direction:column;gap:8px}
-    .field label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.78);font-weight:600}
+    .field{display:flex;flex-direction:column;gap:8px;position:relative}
+    .field label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.78);font-weight:600;display:flex;align-items:center;gap:6px}
+    .field .opt{font-size:10px;letter-spacing:.04em;text-transform:none;color:rgba(255,255,255,.5);font-weight:500}
     .field input,.field select,.field textarea{
       width:100%;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.22);
       background:rgba(255,255,255,.06);color:#fff;font-size:15px;font-family:inherit;
       transition:.2s;outline:none;
     }
-    .field textarea{min-height:120px;resize:vertical;line-height:1.5}
+    .field textarea{min-height:130px;resize:vertical;line-height:1.5}
     .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,.5)}
     .field select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23fff' opacity='.7' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:40px}
     .field select option{background:#0A6FCC;color:#fff}
     .field input:focus,.field select:focus,.field textarea:focus{
       border-color:#fff;background:rgba(255,255,255,.12);box-shadow:0 0 0 4px rgba(255,255,255,.12)
     }
-    .field .hint{font-size:12px;color:rgba(255,255,255,.55)}
-    .field.err input,.field.err select,.field.err textarea{border-color:#FF8B8B;box-shadow:0 0 0 4px rgba(255,139,139,.18)}
+    .field .hint{font-size:11.5px;color:rgba(255,255,255,.55);display:flex;justify-content:space-between;gap:8px}
+    .field.err input,.field.err select,.field.err textarea{border-color:var(--red);box-shadow:0 0 0 4px rgba(255,139,139,.18)}
     .field.err .hint{color:#FFC9C9}
+    .field.ok input,.field.ok select{border-color:rgba(124,255,178,.6)}
+    .field.ok::after{content:"✓";position:absolute;right:14px;top:38px;color:var(--green);font-weight:700;font-size:16px;pointer-events:none}
 
-    .submit-row{margin-top:28px;display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap}
-    .submit-row p{color:rgba(255,255,255,.75);font-size:13.5px;max-width:380px}
+    .step-actions{margin-top:28px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+    .btn-step{
+      padding:14px 26px;border-radius:999px;border:0;cursor:pointer;font-weight:700;font-size:14.5px;
+      display:inline-flex;align-items:center;gap:8px;transition:.25s;
+    }
+    .btn-next{
+      color:var(--blue-deep);background:linear-gradient(135deg,#fff,#E6F3FF);box-shadow:0 12px 30px rgba(0,0,0,.18);
+      margin-left:auto;
+    }
+    .btn-next:hover{transform:translateY(-2px);box-shadow:0 18px 40px rgba(0,0,0,.24)}
+    .btn-next:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
+    .btn-back{
+      background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.28);
+    }
+    .btn-back:hover{background:rgba(255,255,255,.18)}
     .btn-submit{
-      padding:16px 30px;border-radius:999px;border:0;cursor:pointer;font-weight:700;font-size:15px;color:var(--blue-deep);
-      background:linear-gradient(135deg,#fff 0%,#E6F3FF 100%);box-shadow:0 14px 36px rgba(0,0,0,.22);
-      display:inline-flex;align-items:center;gap:10px;position:relative;overflow:hidden;transition:.25s;
+      color:var(--blue-deep);background:linear-gradient(135deg,#fff,#E6F3FF);box-shadow:0 14px 36px rgba(0,0,0,.22);
+      position:relative;overflow:hidden;margin-left:auto;padding:15px 30px;
     }
     .btn-submit::after{
       content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(27,158,255,.35),transparent);transform:translateX(-100%);
@@ -421,16 +571,32 @@
     .form-msg.show{display:block;animation:rise .5s forwards}
     .form-msg.error{background:rgba(255,80,80,.18);border:1px solid rgba(255,139,139,.4);color:#FFD8D8}
 
-    /* Success state */
-    .success-state{display:none;text-align:center;padding:40px 20px}
+    .draft-chip{
+      display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;
+      background:rgba(124,255,178,.14);border:1px solid rgba(124,255,178,.32);color:#A8FFD0;
+      font-size:11.5px;font-weight:500;margin-top:14px;cursor:pointer;
+    }
+    .draft-chip:hover{background:rgba(124,255,178,.22)}
+
+    /* SUCCESS */
+    .success-state{display:none;text-align:center;padding:40px 20px;position:relative}
     .success-state.show{display:block;animation:scaleIn .5s forwards cubic-bezier(.2,.7,.2,1)}
     @keyframes scaleIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
-    .success-state .check-wrap{margin:0 auto 24px;width:88px;height:88px;border-radius:50%;background:rgba(124,255,178,.18);display:grid;place-items:center;border:2px solid #7CFFB2}
+    .success-state .check-wrap{margin:0 auto 24px;width:88px;height:88px;border-radius:50%;background:rgba(124,255,178,.18);display:grid;place-items:center;border:2px solid var(--green);animation:happyBounce 1.2s cubic-bezier(.2,.7,.2,1) .1s}
     .success-state svg.check{width:48px;height:48px}
-    .success-state svg.check path{fill:none;stroke:#7CFFB2;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:48;stroke-dashoffset:48;animation:draw .7s .3s forwards cubic-bezier(.2,.7,.2,1)}
+    .success-state svg.check path{fill:none;stroke:var(--green);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:48;stroke-dashoffset:48;animation:draw .7s .3s forwards cubic-bezier(.2,.7,.2,1)}
     @keyframes draw{to{stroke-dashoffset:0}}
-    .success-state h3{font-size:28px;color:#fff;margin-bottom:10px}
-    .success-state p{color:rgba(255,255,255,.78);font-size:15.5px;max-width:440px;margin:0 auto}
+    .success-state h3{font-size:30px;color:#fff;margin-bottom:10px;font-weight:800;letter-spacing:-.02em}
+    .success-state .seat-num{font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:18px}
+    .success-state p{color:rgba(255,255,255,.82);font-size:15.5px;max-width:480px;margin:0 auto 22px;line-height:1.6}
+    .share-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+    .share-btn{
+      padding:10px 18px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);
+      color:#fff;font-size:13.5px;font-weight:500;display:inline-flex;align-items:center;gap:8px;transition:.2s;
+      backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    }
+    .share-btn:hover{background:rgba(255,255,255,.18);transform:translateY(-2px)}
+    canvas#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:300}
 
     /* ========== FOOTER ========== */
     footer{background:#0D1117;color:#fff;padding:60px 0 40px;position:relative}
@@ -446,17 +612,15 @@
     footer ul a:hover{color:var(--blue)}
     .foot-bottom{margin-top:46px;padding-top:24px;border-top:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:13px;color:rgba(255,255,255,.5)}
 
-    /* ========== HELPERS ========== */
-    .center{text-align:center}
-    .pad-top{padding-top:30px}
-
-    /* Reduce motion */
+    /* Reduced motion */
     @media (prefers-reduced-motion: reduce){
       *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
     }
   </style>
 </head>
 <body>
+
+  <div class="progress-bar" id="progressBar"></div>
 
   <!-- ========== NAV ========== -->
   <nav class="nav" id="nav">
@@ -470,13 +634,23 @@
       unGhost
     </a>
     <div class="nav-links">
+      <a href="#funnel">The funnel</a>
       <a href="#how">How it works</a>
       <a href="#tracks">Tracks</a>
-      <a href="#why-students">For students</a>
-      <a href="#why-companies">For companies</a>
+      <a href="#faq">FAQ</a>
     </div>
     <button class="nav-cta" onclick="document.getElementById('register').scrollIntoView({behavior:'smooth'})">Apply Now</button>
+    <button class="nav-burger" id="navBurger" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
   </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#funnel" onclick="closeMenu()">The funnel</a>
+    <a href="#how" onclick="closeMenu()">How it works</a>
+    <a href="#tracks" onclick="closeMenu()">Tracks</a>
+    <a href="#faq" onclick="closeMenu()">FAQ</a>
+    <a href="#register" onclick="closeMenu()" style="background:linear-gradient(135deg,var(--blue),var(--blue-deep));color:#fff;text-align:center">Apply Now →</a>
+  </div>
 
   <!-- ========== HERO ========== -->
   <section class="hero" id="top">
@@ -487,12 +661,36 @@
     </div>
     <canvas id="particles"></canvas>
 
-    <svg class="hero-ghost" id="heroGhost" viewBox="0 0 64 64" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M16 28a16 16 0 0 1 32 0v22l-6-5-5 5-5-5-5 5-5-5-6 5z"/>
-      <circle cx="24" cy="30" r="2.5" fill="#fff"/>
-      <circle cx="40" cy="30" r="2.5" fill="#fff"/>
-      <path d="M24 40c2 2 6 2 8 0"/>
-    </svg>
+    <!-- Interactive ghost: eyes follow cursor, blinks, reacts to CTAs -->
+    <div class="hero-ghost" id="heroGhost">
+      <svg viewBox="0 0 200 200" fill="none">
+        <g class="ghost-body">
+          <path d="M40 90c0-33 27-60 60-60s60 27 60 60v68l-12-10-10 10-10-10-10 10-10-10-10 10-10-10-12 10z" fill="rgba(255,255,255,0.06)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>
+          <!-- Eye whites -->
+          <ellipse cx="78" cy="92" rx="11" ry="13" fill="#fff" opacity=".95"/>
+          <ellipse cx="122" cy="92" rx="11" ry="13" fill="#fff" opacity=".95"/>
+          <!-- Pupils -->
+          <circle class="pupil pupil-l" cx="78" cy="92" r="4" fill="#0A6FCC"/>
+          <circle class="pupil pupil-r" cx="122" cy="92" r="4" fill="#0A6FCC"/>
+          <!-- Eyelids (closed = scaleY 1, open = 0) -->
+          <ellipse class="eyelid eyelid-l" cx="78" cy="92" rx="11" ry="13" fill="#fff"/>
+          <ellipse class="eyelid eyelid-r" cx="122" cy="92" rx="11" ry="13" fill="#fff"/>
+          <!-- Mouth -->
+          <path class="ghost-mouth" d="M86 115 Q100 125 114 115" stroke="#fff" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Idle peek ghost -->
+    <div class="hero-peek" id="heroPeek">
+      <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 28a18 18 0 0 1 36 0v24l-6-5-5 5-5-5-5 5-5-5-6 5z" fill="rgba(255,255,255,0.1)"/>
+        <circle cx="24" cy="30" r="2.5" fill="currentColor"/>
+        <circle cx="40" cy="30" r="2.5" fill="currentColor"/>
+        <path d="M24 40c2 2 6 2 8 0"/>
+      </svg>
+      <span class="peek-tip">Boo. Apply already 👻</span>
+    </div>
 
     <div class="wrap hero-inner">
       <div class="hero-chip">
@@ -505,23 +703,20 @@
       </h1>
       <p class="hero-sub">A curated hiring community for the people who'd rather build than wait. Trained, vetted, and personally introduced to the teams that count.</p>
       <div class="hero-ctas">
-        <button class="btn btn-primary" onclick="document.getElementById('register').scrollIntoView({behavior:'smooth'})">
+        <button class="btn btn-primary" id="ctaPrimary" onclick="document.getElementById('register').scrollIntoView({behavior:'smooth'})">
           Claim Your Seat <span class="arr">→</span>
         </button>
-        <button class="btn btn-ghost" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
+        <button class="btn btn-ghost" id="ctaGhost" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
           See How It Works
         </button>
       </div>
-      <div class="hero-seats">
+      <div class="hero-seats" id="heroSeats">
         <span class="pulse"></span>
-        <span>Only <b>184 seats left</b> in Cohort 2026</span>
+        <span>Only <b id="seatsLeftHero">184</b> seats left in Cohort 2026</span>
       </div>
     </div>
 
-    <div class="scroll-cue">
-      <span>SCROLL</span>
-      <span class="chev"></span>
-    </div>
+    <div class="scroll-cue"><span>SCROLL</span><span class="chev"></span></div>
   </section>
 
   <!-- ========== PROBLEM ========== -->
@@ -532,24 +727,26 @@
       <div class="reveal">
         <div class="overline">01 · The Problem</div>
         <h2>Both sides <span class="accent">lose.</span></h2>
-        <p class="pad-top" style="max-width:660px;font-size:17px">The way hiring works right now is broken in both directions. Talent disappears into résumé floods. Companies drown in noise. We fix the middle.</p>
+        <p style="max-width:660px;font-size:17px;padding-top:18px">The way hiring works right now is broken in both directions. Talent disappears into résumé floods. Companies drown in noise. We fix the middle.</p>
       </div>
       <div class="grid">
         <div class="problem-card glass-light reveal-l left">
           <div class="tag">FOR STUDENTS</div>
           <h3>Apply everywhere. Hear back from no one.</h3>
           <p>Endless résumés disappear into ATS black holes. The good ones get filtered out by keyword. The bad ones get the same silence. Drive doesn't show up on a CV.</p>
+          <div class="stat">📉 Industry avg response rate from job boards: under 2%</div>
         </div>
         <div class="problem-card glass-light reveal-r right">
           <div class="tag">FOR COMPANIES</div>
           <h3>Post one role. Drown in résumés.</h3>
           <p>HR teams spend more time sorting than hiring. Job boards push reach, not fit. By the time a real candidate surfaces, they've already taken a different offer.</p>
+          <div class="stat">⏳ Avg time-to-hire for a single role: 42 days</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ========== WHAT WE ARE ========== -->
+  <!-- ========== ANSWER ========== -->
   <section class="answer" id="what">
     <div class="hero-bg">
       <div class="hero-blob b1" style="background:#1B9EFF;opacity:.3"></div>
@@ -565,7 +762,79 @@
         <div class="chip"><span>Not an agency</span></div>
         <div class="chip"><span>Not another course platform</span></div>
       </div>
+      <div class="we-are reveal">
+        <div class="chip"><span>✓ 1 personal intro per fit</span></div>
+        <div class="chip"><span>✓ ₹0 cost to hiring teams</span></div>
+        <div class="chip"><span>✓ Real capstones, not certificates</span></div>
+      </div>
       <p class="lead reveal">We train motivated learners, hand-pick them, and personally introduce them to hiring teams. Companies come to us. We pick the candidate. We make the introduction. That's the whole product — and the reason it works.</p>
+    </div>
+  </section>
+
+  <!-- ========== FUNNEL VISUALIZATION ========== -->
+  <section class="funnel-sec" id="funnel">
+    <div class="deco-blob deco-blue" style="width:340px;height:340px;top:60px;left:-100px;opacity:.12"></div>
+    <div class="wrap">
+      <div class="reveal">
+        <div class="overline">03 · The Funnel</div>
+        <h2>From <span class="accent">five thousand</span> to a hand-picked few.</h2>
+        <p style="max-width:680px;font-size:17px;padding-top:18px">This is the whole model in one picture. Wide at the top — anyone can show up. Narrow at the bottom — only the people who actually do the work get introduced.</p>
+      </div>
+      <div class="funnel-grid">
+        <div class="funnel-svg-wrap">
+          <svg class="funnel-svg" id="funnelSvg" viewBox="0 0 500 520" aria-hidden="true">
+            <defs>
+              <linearGradient id="fgrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#7FCBFF"/>
+                <stop offset="1" stop-color="#0A6FCC"/>
+              </linearGradient>
+              <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#1B9EFF" flood-opacity=".3"/></filter>
+            </defs>
+            <!-- Layer 1: 5k workshop -->
+            <g class="funnel-layer" data-step="1" filter="url(#softShadow)">
+              <polygon class="shape" points="20,20 480,20 420,135 80,135"/>
+              <text class="funnel-label" x="250" y="65" dy=".35em">5,000</text>
+              <text class="funnel-sublabel" x="250" y="108">FREE WORKSHOP · YEAR</text>
+            </g>
+            <!-- Layer 2: 500 bootcamp -->
+            <g class="funnel-layer" data-step="2" filter="url(#softShadow)">
+              <polygon class="shape" points="80,140 420,140 365,255 135,255"/>
+              <text class="funnel-label" x="250" y="185" dy=".35em">500</text>
+              <text class="funnel-sublabel" x="250" y="228">PAID BOOTCAMP</text>
+            </g>
+            <!-- Layer 3: 316 community -->
+            <g class="funnel-layer" data-step="3" filter="url(#softShadow)">
+              <polygon class="shape" points="135,260 365,260 320,375 180,375"/>
+              <text class="funnel-label" x="250" y="305" dy=".35em">316</text>
+              <text class="funnel-sublabel" x="250" y="348">CURATED COHORT</text>
+            </g>
+            <!-- Layer 4: matched -->
+            <g class="funnel-layer" data-step="4" filter="url(#softShadow)">
+              <polygon class="shape" points="180,380 320,380 290,495 210,495"/>
+              <text class="funnel-label" x="250" y="423" dy=".35em" style="font-size:20px">Matched</text>
+              <text class="funnel-sublabel" x="250" y="465">INTROS</text>
+            </g>
+          </svg>
+        </div>
+        <div class="funnel-side">
+          <div class="funnel-step" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
+            <div class="n">01</div>
+            <div><h4>Free 2-day workshop</h4><p>Open to all students. Anyone curious shows up — no commitment.</p></div>
+          </div>
+          <div class="funnel-step" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
+            <div class="n">02</div>
+            <div><h4>3-week paid bootcamp · ₹4,999</h4><p>Practitioner-led. Three capstones. Self-selected from the workshop.</p></div>
+          </div>
+          <div class="funnel-step" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
+            <div class="n">03</div>
+            <div><h4>Curated community</h4><p>Capped at 500 per cohort. Vetted by us. The smallness is the product.</p></div>
+          </div>
+          <div class="funnel-step" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
+            <div class="n">04</div>
+            <div><h4>Personal introductions</h4><p>When a role fits, we walk your name into the hiring manager's inbox.</p></div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -574,13 +843,14 @@
     <div class="deco-blob deco-blue" style="width:340px;height:340px;top:80px;left:-80px"></div>
     <div class="wrap">
       <div class="reveal">
-        <div class="overline">03 · How We Work</div>
+        <div class="overline">04 · How We Work</div>
         <h2>Top of funnel is wide. <span class="accent">What comes out is small.</span></h2>
       </div>
       <div class="how-timeline">
         <div class="step reveal">
           <div class="step-num">01</div>
           <div class="step-body glass-light">
+            <div class="duration">2 days · Free</div>
             <h3>Free 2-day workshop</h3>
             <p>Open to all students. AI, marketing, freelancing — taught by practitioners. About 4,000–5,000 students attend every year.</p>
           </div>
@@ -588,13 +858,15 @@
         <div class="step reveal">
           <div class="step-num">02</div>
           <div class="step-body glass-light">
-            <h3>3-week paid bootcamp · ₹4,999</h3>
+            <div class="duration">3 weeks · ₹4,999</div>
+            <h3>3-week paid bootcamp</h3>
             <p>Practitioner-led. Online. Three required capstones across Career, Creator, and Daily-Life — so you finish with real work in your portfolio, not a PDF certificate.</p>
           </div>
         </div>
         <div class="step reveal">
           <div class="step-num">03</div>
           <div class="step-body glass-light">
+            <div class="duration">Ongoing · Capped at 500</div>
             <h3>Curated community</h3>
             <p>Up to 500 students per cohort. One cohort per year. Capped on purpose — the smallness is the product, not a constraint.</p>
           </div>
@@ -602,11 +874,89 @@
         <div class="step reveal">
           <div class="step-num">04</div>
           <div class="step-body glass-light">
+            <div class="duration">When a role fits</div>
             <h3>Hand-picked introductions</h3>
             <p>When a company posts a role that fits you, our team puts your name forward directly. No résumé pile. No silence.</p>
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ========== COMPARISON TABLE ========== -->
+  <section class="compare">
+    <div class="deco-blob deco-blue" style="width:300px;height:300px;top:80px;right:-100px;opacity:.1"></div>
+    <div class="wrap">
+      <div class="reveal">
+        <div class="overline">05 · Why us, plainly</div>
+        <h2>How we stack up <span class="accent">against the alternatives.</span></h2>
+        <p style="max-width:680px;font-size:17px;padding-top:18px">No "we're disrupting hiring" hand-waving. Here's the model side-by-side with what else exists.</p>
+      </div>
+      <div class="compare-wrap reveal">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th class="col-us">unGhost</th>
+              <th>Job boards</th>
+              <th>Recruitment agencies</th>
+              <th>Course platforms</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Cost to companies</td>
+              <td class="col-us">₹0</td>
+              <td>Posting fees</td>
+              <td>8–25% of CTC</td>
+              <td>N/A</td>
+            </tr>
+            <tr>
+              <td>Cost to students</td>
+              <td class="col-us">₹4,999 (one-time)</td>
+              <td>Free</td>
+              <td>Free</td>
+              <td>₹10k–₹2L</td>
+            </tr>
+            <tr>
+              <td>Personal hiring intro</td>
+              <td class="col-us"><span class="check">✓</span></td>
+              <td><span class="cross">✗</span></td>
+              <td><span class="check">✓</span> (sales-driven)</td>
+              <td><span class="cross">✗</span></td>
+            </tr>
+            <tr>
+              <td>Candidates pre-trained</td>
+              <td class="col-us"><span class="check">✓</span></td>
+              <td><span class="cross">✗</span></td>
+              <td><span class="cross">✗</span></td>
+              <td>Sometimes</td>
+            </tr>
+            <tr>
+              <td>Real capstones required</td>
+              <td class="col-us"><span class="check">✓</span></td>
+              <td>N/A</td>
+              <td>N/A</td>
+              <td>Optional</td>
+            </tr>
+            <tr>
+              <td>Cohort size capped</td>
+              <td class="col-us">500 / year</td>
+              <td>Unlimited</td>
+              <td>Unlimited</td>
+              <td>Unlimited</td>
+            </tr>
+            <tr>
+              <td>Verifiable badge for hiring teams</td>
+              <td class="col-us"><span class="check">✓</span></td>
+              <td><span class="cross">✗</span></td>
+              <td><span class="cross">✗</span></td>
+              <td><span class="cross">✗</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="compare-note reveal">We pick this fight because we believe the other models are broken — not as marketing, as a thesis.</p>
     </div>
   </section>
 
@@ -618,33 +968,33 @@
     </div>
     <div class="wrap">
       <div class="reveal">
-        <div class="overline overline-white">04 · By The Numbers</div>
+        <div class="overline overline-white">06 · By The Numbers</div>
         <h2>The math of <span class="accent">curation.</span></h2>
       </div>
-      <div class="num-grid" id="numGrid">
+      <div class="num-grid">
         <div class="num-card reveal-scale">
-          <div class="num"><span class="cnt" data-target="5000" data-suffix="" data-prefix="" data-display="4–5k">0</span></div>
-          <div class="num-sub">Students attend our free workshops each year</div>
+          <div class="num">₹<span class="cnt" data-target="0">0</span></div>
+          <div class="num-sub">What hiring companies pay — no fees, ever</div>
+        </div>
+        <div class="num-card reveal-scale">
+          <div class="num"><span class="cnt" data-target="5000" data-display="4–5k">0</span></div>
+          <div class="num-sub">Students at our free workshops each year</div>
         </div>
         <div class="num-card reveal-scale">
           <div class="num"><span class="cnt" data-target="500">0</span></div>
-          <div class="num-sub">Curated bootcamp seats per cohort, one cohort per year</div>
+          <div class="num-sub">Curated bootcamp seats per cohort</div>
         </div>
         <div class="num-card reveal-scale">
           <div class="num"><span class="cnt" data-target="316">0</span></div>
-          <div class="num-sub">Seats already filled in Cohort 2026 — 184 remain</div>
+          <div class="num-sub">Seats already filled in Cohort 2026</div>
         </div>
         <div class="num-card reveal-scale">
           <div class="num">₹<span class="cnt" data-target="4999">0</span></div>
           <div class="num-sub">One-time bootcamp fee for students</div>
         </div>
         <div class="num-card reveal-scale">
-          <div class="num">₹<span class="cnt" data-target="0" data-display="0">0</span></div>
-          <div class="num-sub">What companies pay — no posting fees, no commissions, ever</div>
-        </div>
-        <div class="num-card reveal-scale">
           <div class="num"><span class="cnt" data-target="6">0</span></div>
-          <div class="num-sub">Career tracks across our placement community</div>
+          <div class="num-sub">Career tracks in the placement community</div>
         </div>
       </div>
     </div>
@@ -656,52 +1006,34 @@
     <div class="deco-blob deco-deep" style="width:300px;height:300px;bottom:80px;left:-80px"></div>
     <div class="wrap">
       <div class="reveal">
-        <div class="overline">05 · Six Tracks, One Community</div>
+        <div class="overline">07 · Six Tracks, One Community</div>
         <h2>We don't train everyone in <span class="accent">everything.</span></h2>
         <p class="sub-h">Students go deep in one track — not scattered across ten — so we can place them in real roles, not abstract ones.</p>
       </div>
-      <div class="track-grid" id="trackGrid">
+      <div class="track-grid">
         <div class="track-card reveal-scale">
-          <div class="track-icon">
-            <svg viewBox="0 0 24 24"><polyline points="8 6 2 12 8 18"/><polyline points="16 6 22 12 16 18"/></svg>
-          </div>
-          <h3>Tech</h3>
-          <p>Engineers who can ship — backend, frontend, full-stack. Real codebases, real PRs.</p>
+          <div class="track-icon"><svg viewBox="0 0 24 24"><polyline points="8 6 2 12 8 18"/><polyline points="16 6 22 12 16 18"/></svg></div>
+          <h3>Tech</h3><p>Engineers who can ship — backend, frontend, full-stack. Real codebases, real PRs.</p>
         </div>
         <div class="track-card reveal-scale">
-          <div class="track-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2L3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5z"/><polyline points="9 12 11 14 15 10"/></svg>
-          </div>
-          <h3>Sales</h3>
-          <p>Closers trained on real pipelines, scripts, and objection-handling. Quota-ready from week one.</p>
+          <div class="track-icon"><svg viewBox="0 0 24 24"><path d="M12 2L3 7v6c0 5 4 9 9 9s9-4 9-9V7l-9-5z"/><polyline points="9 12 11 14 15 10"/></svg></div>
+          <h3>Sales</h3><p>Closers trained on real pipelines, scripts, and objection-handling. Quota-ready from week one.</p>
         </div>
         <div class="track-card reveal-scale">
-          <div class="track-icon">
-            <svg viewBox="0 0 24 24"><path d="M21 4l-9 9-4-4-6 6"/><polyline points="14 4 21 4 21 11"/></svg>
-          </div>
-          <h3>Marketing</h3>
-          <p>Strategy, performance, and content — fluent in modern stacks and the metrics that matter.</p>
+          <div class="track-icon"><svg viewBox="0 0 24 24"><path d="M21 4l-9 9-4-4-6 6"/><polyline points="14 4 21 4 21 11"/></svg></div>
+          <h3>Marketing</h3><p>Strategy, performance, and content — fluent in modern stacks and the metrics that matter.</p>
         </div>
         <div class="track-card reveal-scale">
-          <div class="track-icon">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
-          </div>
-          <h3>Social Media</h3>
-          <p>Native creators — reach, retention, and channels. Builders, not posters.</p>
+          <div class="track-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></div>
+          <h3>Social Media</h3><p>Native creators — reach, retention, and channels. Builders, not posters.</p>
         </div>
         <div class="track-card reveal-scale">
-          <div class="track-icon">
-            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8M12 18v2"/></svg>
-          </div>
-          <h3>Freelancing</h3>
-          <p>Self-starters who know how to scope, price, and deliver. Independent on day one.</p>
+          <div class="track-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8M12 18v2"/></svg></div>
+          <h3>Freelancing</h3><p>Self-starters who know how to scope, price, and deliver. Independent on day one.</p>
         </div>
         <div class="track-card reveal-scale">
-          <div class="track-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z"/></svg>
-          </div>
-          <h3>Founders</h3>
-          <p>Entrepreneurs in training — for roles that need ownership, judgment, and stomach.</p>
+          <div class="track-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z"/></svg></div>
+          <h3>Founders</h3><p>Entrepreneurs in training — for roles that need ownership, judgment, and stomach.</p>
         </div>
       </div>
     </div>
@@ -715,47 +1047,15 @@
     </div>
     <div class="wrap">
       <div class="reveal">
-        <div class="overline overline-white">06 · For Motivated Learners</div>
+        <div class="overline overline-white">08 · For Motivated Learners</div>
         <h2>Drive over <span class="accent">pedigree.</span></h2>
         <p class="sub-h">We don't filter on the college you went to or your CGPA. We filter on whether you'll actually do the work.</p>
       </div>
       <div class="why-grid">
-        <div class="why-card reveal">
-          <div class="why-dot">
-            <svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>
-          </div>
-          <div>
-            <h3>Personal hiring introductions</h3>
-            <p>When a role fits you, our team walks your name in directly. You don't compete with the résumé pile.</p>
-          </div>
-        </div>
-        <div class="why-card reveal">
-          <div class="why-dot">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
-          </div>
-          <div>
-            <h3>Practitioner-led training</h3>
-            <p>Sessions taught by founders, operators, and senior individual contributors — never professional course-sellers.</p>
-          </div>
-        </div>
-        <div class="why-card reveal">
-          <div class="why-dot">
-            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h7"/></svg>
-          </div>
-          <div>
-            <h3>Real work, not certificates</h3>
-            <p>Three required capstones: Career, Creator, Daily-Life. You leave with portfolio pieces, not a PDF.</p>
-          </div>
-        </div>
-        <div class="why-card reveal">
-          <div class="why-dot">
-            <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5"/><path d="M14 19c0-2 2-4 5-4"/></svg>
-          </div>
-          <div>
-            <h3>A community of motivated peers</h3>
-            <p>Curated, hungry, ambitious. The kind of people you want around you for the next phase.</p>
-          </div>
-        </div>
+        <div class="why-card reveal"><div class="why-dot"><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg></div><div><h3>Personal hiring introductions</h3><p>When a role fits you, our team walks your name in directly. You don't compete with the résumé pile.</p></div></div>
+        <div class="why-card reveal"><div class="why-dot"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg></div><div><h3>Practitioner-led training</h3><p>Sessions taught by founders, operators, and senior individual contributors — never professional course-sellers.</p></div></div>
+        <div class="why-card reveal"><div class="why-dot"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h7"/></svg></div><div><h3>Real work, not certificates</h3><p>Three required capstones: Career, Creator, Daily-Life. You leave with portfolio pieces, not a PDF.</p></div></div>
+        <div class="why-card reveal"><div class="why-dot"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5"/><path d="M14 19c0-2 2-4 5-4"/></svg></div><div><h3>A community of motivated peers</h3><p>Curated, hungry, ambitious. The kind of people you want around you for the next phase.</p></div></div>
       </div>
     </div>
   </section>
@@ -766,46 +1066,84 @@
     <div class="deco-blob deco-deep" style="width:300px;height:300px;bottom:60px;right:-80px"></div>
     <div class="wrap">
       <div class="reveal">
-        <div class="overline">07 · For Hiring Teams</div>
+        <div class="overline">09 · For Hiring Teams</div>
         <h2>Quality is the <span class="accent">default,</span> not the exception.</h2>
-        <p class="sub-h" style="color:var(--muted);margin-top:18px;font-size:17px;max-width:720px">A different model for hiring. We do the filtering. You do the interviews. Nobody pays us to post — and that's exactly why it works.</p>
+        <p style="color:var(--muted);margin-top:18px;font-size:17px;max-width:720px">A different model for hiring. We do the filtering. You do the interviews. Nobody pays us to post — and that's exactly why it works.</p>
       </div>
       <div class="why-grid">
-        <div class="why-card reveal">
-          <div class="why-dot">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-          </div>
-          <div>
-            <h3>We hand-pick — you don't sort</h3>
-            <p>Every name we forward has been trained and vetted by us. No résumé floods. No spam.</p>
-          </div>
+        <div class="why-card reveal"><div class="why-dot"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div><div><h3>We hand-pick — you don't sort</h3><p>Every name we forward has been trained and vetted by us. No résumé floods. No spam.</p></div></div>
+        <div class="why-card reveal"><div class="why-dot"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12c1 1 2 2 4 2s3-1 4-2M9 9h0M15 9h0"/></svg></div><div><h3>No posting fees. No commissions. Ever.</h3><p>Companies pay nothing. The model works because students do. Aligned incentives by design.</p></div></div>
+        <div class="why-card reveal"><div class="why-dot"><svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div><div><h3>"Trained by Unghost" is verifiable</h3><p>Hiring teams can confirm on our platform that the student went through our cohort. Trust, signed.</p></div></div>
+        <div class="why-card reveal"><div class="why-dot"><svg viewBox="0 0 24 24"><polyline points="13 2 13 12 21 12"/><circle cx="12" cy="14" r="8"/></svg></div><div><h3>We move fast or we don't recommend</h3><p>If we don't have the right candidate for your role, we say so. We protect the brand by saying no.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FAQ ========== -->
+  <section class="faq" id="faq">
+    <div class="deco-blob deco-blue" style="width:340px;height:340px;top:80px;right:-100px;opacity:.08"></div>
+    <div class="wrap">
+      <div class="reveal">
+        <div class="overline">10 · Real Questions</div>
+        <h2>The skeptic's <span class="accent">FAQ.</span></h2>
+        <p style="max-width:680px;font-size:17px;padding-top:18px">If you're suspicious, good — you should be. Here's what we get asked most.</p>
+      </div>
+      <div class="faq-list reveal" id="faqList">
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>Isn't this just another scammy bootcamp dressed up as a community?</span>
+            <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">Three things make this not-that. First: capped cohort, by design — we lose money beyond 500. Second: companies pay zero — we have no incentive to inflate placements. Third: practitioner-led, not professional-course-seller-led. Read the comparison table above; the numbers don't lie about the model.</div></div>
         </div>
-        <div class="why-card reveal">
-          <div class="why-dot">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12c1 1 2 2 4 2s3-1 4-2M9 9h0M15 9h0"/></svg>
-          </div>
-          <div>
-            <h3>No posting fees. No commissions. Ever.</h3>
-            <p>Companies pay nothing. The model works because students do. Aligned incentives by design.</p>
-          </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>What if I don't get placed?</span>
+            <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">You stay in the curated community for the year and we keep introducing you when fits come up. We don't make placement guarantees because we won't lie — but our incentive is to place you (the better our outcomes, the better next year's cohort).</div></div>
         </div>
-        <div class="why-card reveal">
-          <div class="why-dot">
-            <svg viewBox="0 0 24 24"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
-          </div>
-          <div>
-            <h3>"Trained by Unghost" is verifiable</h3>
-            <p>Hiring teams can confirm on our platform that the student went through our cohort. Trust, signed.</p>
-          </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>Why ₹4,999? What does that include?</span>
+            <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">The full 3-week bootcamp (~60 live sessions hours), three required capstones with feedback, lifetime access to the cohort community, and the year of hand-picked hiring introductions afterwards. We chose ₹4,999 because it's the lowest number that filters for people who'll actually show up.</div></div>
         </div>
-        <div class="why-card reveal">
-          <div class="why-dot">
-            <svg viewBox="0 0 24 24"><polyline points="13 2 13 12 21 12"/><circle cx="12" cy="14" r="8"/></svg>
-          </div>
-          <div>
-            <h3>We move fast or we don't recommend</h3>
-            <p>If we don't have the right candidate for your role, we say so. We protect the brand by saying no.</p>
-          </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>Who teaches the bootcamp?</span>
+            <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">Founders, operators, and senior individual contributors — people doing the work today, not retired professional educators. Each track has its own instructor lineup. Instructor pages drop closer to cohort start.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>How do you "hand-pick" — what's the selection criteria?</span>
+            <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">For the cohort: how you answer the "why" question, what you ship during the bootcamp, and your three capstones. We don't filter on college or CGPA. For intros: track fit + recency of work + a quick conversation. Boring, deliberate, human.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>What do companies actually pay?</span>
+            <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">₹0. No posting fees. No commissions. No retainer. Forever. The whole model is built so that our incentive aligns with the student, not the cheque.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>Can I switch tracks after starting?</span>
+            <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">Yes, in the first week. After that, you're committed — depth beats breadth here. You can keep watching other tracks' sessions for context, but your capstones are in your chosen track.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button">
+            <span>What happens right after I submit this form?</span>
+            <span class="ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+          </button>
+          <div class="faq-a"><div class="faq-a-inner">A real human reads your answers within 48 hours. If you're in, you get a calendar invite for the next workshop and onboarding details. If we need a quick chat first, you'll get a Calendly link. No auto-emails. No funnels.</div></div>
         </div>
       </div>
     </div>
@@ -815,89 +1153,104 @@
   <section class="register" id="register">
     <div class="wrap">
       <div class="reveal">
-        <div class="overline overline-white">08 · Join Cohort 2026</div>
+        <div class="overline overline-white">11 · Join Cohort 2026</div>
         <h2>Claim your <span class="accent">seat.</span></h2>
-        <p class="sub-h">316 in. 184 left. Applications close when we hit 500 — usually within weeks, never months. Tell us why you'll do the work, and we'll get back within 48 hours.</p>
+        <p class="sub-h">Applications close when we hit 500 — usually within weeks, never months. Tell us why you'll do the work, and we'll get back within 48 hours.</p>
         <div class="seat-bar">
           <span class="pulse"></span>
-          <span>Cohort 2026 · <b style="color:#fff">184 seats remaining</b></span>
+          <span>Cohort 2026 · <b style="color:#fff" id="seatsLeftForm">184</b> seats remaining</span>
         </div>
       </div>
 
       <div class="form-card reveal-scale" id="formCard">
         <form id="regForm" novalidate>
-          <div class="form-grid">
-            <div class="field">
-              <label for="name">Full Name</label>
-              <input id="name" name="name" type="text" placeholder="Your full name" required maxlength="100" />
+          <div class="step-header">
+            <div class="step-meta" id="stepMeta">Step 1 of 3 · You</div>
+            <div class="step-time">~30 seconds total</div>
+          </div>
+          <div class="step-progress"><div class="bar" id="progBar"></div></div>
+
+          <!-- STEP 1: YOU -->
+          <div class="step-panel active" data-step="1">
+            <h3>First, the basics.</h3>
+            <p class="lead">Who are you and how do we reach you? Four short fields.</p>
+            <div class="form-grid">
+              <div class="field"><label for="name">Full Name</label><input id="name" name="name" type="text" placeholder="Your full name" required maxlength="100" autocomplete="name" /></div>
+              <div class="field"><label for="email">Email Address</label><input id="email" name="email" type="email" placeholder="you@email.com" required maxlength="150" autocomplete="email" /></div>
+              <div class="field"><label for="phone">Phone Number</label><input id="phone" name="phone" type="tel" placeholder="+91 98765 43210" required maxlength="25" autocomplete="tel" /></div>
+              <div class="field"><label for="city">City</label><input id="city" name="city" type="text" placeholder="Bangalore, Mumbai, anywhere…" required maxlength="100" list="city-list" autocomplete="address-level2" /><datalist id="city-list"><option>Bangalore</option><option>Mumbai</option><option>Delhi</option><option>Hyderabad</option><option>Pune</option><option>Chennai</option><option>Kolkata</option><option>Ahmedabad</option><option>Jaipur</option><option>Lucknow</option><option>Chandigarh</option><option>Indore</option><option>Bhopal</option><option>Nagpur</option><option>Surat</option><option>Kochi</option><option>Coimbatore</option><option>Vadodara</option><option>Visakhapatnam</option><option>Patna</option></datalist></div>
             </div>
-            <div class="field">
-              <label for="email">Email Address</label>
-              <input id="email" name="email" type="email" placeholder="you@email.com" required maxlength="150" />
-            </div>
-            <div class="field">
-              <label for="phone">Phone Number</label>
-              <input id="phone" name="phone" type="tel" placeholder="+91 98765 43210" required maxlength="25" />
-            </div>
-            <div class="field">
-              <label for="city">City</label>
-              <input id="city" name="city" type="text" placeholder="Bangalore, Mumbai, anywhere…" required maxlength="100" />
-            </div>
-            <div class="field">
-              <label for="college">College / University</label>
-              <input id="college" name="college" type="text" placeholder="Your college or last institution" required maxlength="200" />
-            </div>
-            <div class="field">
-              <label for="study_year">Current Year of Study</label>
-              <select id="study_year" name="study_year" required>
-                <option value="">Select…</option>
-                <option value="1st">1st Year</option>
-                <option value="2nd">2nd Year</option>
-                <option value="3rd">3rd Year</option>
-                <option value="4th">4th Year</option>
-                <option value="Graduate">Graduate / Working</option>
-              </select>
-            </div>
-            <div class="field full">
-              <label for="track">Track of Interest</label>
-              <select id="track" name="track" required>
-                <option value="">Pick the one you'll go deep on…</option>
-                <option value="Tech">Tech — Engineering & Product</option>
-                <option value="Sales">Sales — Pipelines & Closing</option>
-                <option value="Marketing">Marketing — Strategy & Performance</option>
-                <option value="Social Media">Social Media — Reach & Creators</option>
-                <option value="Freelancing">Freelancing — Independent Work</option>
-                <option value="Founders">Founders — Ownership Track</option>
-              </select>
-            </div>
-            <div class="field full">
-              <label for="motivation">Why do you want to join? <span class="hint" style="text-transform:none;letter-spacing:0;font-size:11px;color:rgba(255,255,255,.55);font-weight:500;margin-left:6px">(min 50 chars — this is how we filter for drive)</span></label>
-              <textarea id="motivation" name="motivation" placeholder="Tell us what you're chasing. We read every single answer." required minlength="50" maxlength="1000"></textarea>
+            <div class="step-actions">
+              <button type="button" class="btn-step btn-next" data-to="2">Continue <span class="arr">→</span></button>
             </div>
           </div>
 
-          <div class="form-msg error" id="formMsg"></div>
+          <!-- STEP 2: BACKGROUND -->
+          <div class="step-panel" data-step="2">
+            <h3>Your background.</h3>
+            <p class="lead">Where you're coming from and where you want to go deep.</p>
+            <div class="form-grid">
+              <div class="field full"><label for="college">College / University</label><input id="college" name="college" type="text" placeholder="Your college or last institution" required maxlength="200" list="college-list" /><datalist id="college-list"><option>IIT Bombay</option><option>IIT Delhi</option><option>IIT Madras</option><option>IIT Kanpur</option><option>IIT Kharagpur</option><option>IIT Roorkee</option><option>IIT Guwahati</option><option>IIT Hyderabad</option><option>BITS Pilani</option><option>BITS Goa</option><option>BITS Hyderabad</option><option>NIT Trichy</option><option>NIT Surathkal</option><option>NIT Warangal</option><option>NIT Calicut</option><option>IIIT Hyderabad</option><option>IIIT Bangalore</option><option>IIIT Delhi</option><option>VIT Vellore</option><option>SRM University</option><option>Delhi University</option><option>Mumbai University</option><option>Anna University</option><option>Pune University</option><option>Jadavpur University</option><option>Manipal Institute of Technology</option><option>PES University</option><option>RV College of Engineering</option><option>DTU Delhi</option><option>NSUT Delhi</option></datalist></div>
+              <div class="field"><label for="study_year">Current Year of Study</label><select id="study_year" name="study_year" required><option value="">Select…</option><option value="1st">1st Year</option><option value="2nd">2nd Year</option><option value="3rd">3rd Year</option><option value="4th">4th Year</option><option value="Graduate">Graduate / Working</option></select></div>
+              <div class="field"><label for="track">Track of Interest</label><select id="track" name="track" required><option value="">Pick the one you'll go deep on…</option><option value="Tech">Tech — Engineering &amp; Product</option><option value="Sales">Sales — Pipelines &amp; Closing</option><option value="Marketing">Marketing — Strategy &amp; Performance</option><option value="Social Media">Social Media — Reach &amp; Creators</option><option value="Freelancing">Freelancing — Independent Work</option><option value="Founders">Founders — Ownership Track</option></select></div>
+            </div>
+            <div class="step-actions">
+              <button type="button" class="btn-step btn-back" data-to="1">← Back</button>
+              <button type="button" class="btn-step btn-next" data-to="3">Continue <span class="arr">→</span></button>
+            </div>
+          </div>
 
-          <div class="submit-row">
-            <p>By applying, you agree to be considered for Cohort 2026 only. We won't spam, sell, or share your details. Ever.</p>
-            <button type="submit" class="btn-submit" id="submitBtn">
-              <span class="label">Submit Application</span>
-              <span class="arr">→</span>
-              <span class="spinner"></span>
-            </button>
+          <!-- STEP 3: DRIVE -->
+          <div class="step-panel" data-step="3">
+            <h3>The most important question.</h3>
+            <p class="lead">This is how we filter. Take a minute. Be specific.</p>
+            <div class="form-grid">
+              <div class="field full">
+                <label for="motivation">Why do you want to join?</label>
+                <textarea id="motivation" name="motivation" placeholder="What are you chasing? What have you tried? What would change for you if this works? We read every answer." required minlength="50" maxlength="1000"></textarea>
+                <div class="hint"><span>Min 50 characters — be specific, not polished.</span><span id="motivCount">0 / 50</span></div>
+              </div>
+              <div class="field"><label for="portfolio_url">Portfolio URL <span class="opt">optional</span></label><input id="portfolio_url" name="portfolio_url" type="url" placeholder="https://yourwork.com" maxlength="300" /></div>
+              <div class="field"><label for="linkedin_url">LinkedIn <span class="opt">optional</span></label><input id="linkedin_url" name="linkedin_url" type="url" placeholder="https://linkedin.com/in/you" maxlength="300" /></div>
+              <div class="field full"><label for="github_url">GitHub <span class="opt">optional</span></label><input id="github_url" name="github_url" type="url" placeholder="https://github.com/you" maxlength="300" /></div>
+            </div>
+            <div class="form-msg error" id="formMsg"></div>
+            <div class="step-actions">
+              <button type="button" class="btn-step btn-back" data-to="2">← Back</button>
+              <button type="submit" class="btn-step btn-submit" id="submitBtn">
+                <span class="label">Submit Application</span>
+                <span class="arr">→</span>
+                <span class="spinner"></span>
+              </button>
+            </div>
           </div>
         </form>
 
         <div class="success-state" id="successState">
-          <div class="check-wrap">
-            <svg class="check" viewBox="0 0 48 48"><path d="M12 24 l8 8 l16 -18"/></svg>
-          </div>
+          <div class="check-wrap"><svg class="check" viewBox="0 0 48 48"><path d="M12 24 l8 8 l16 -18"/></svg></div>
           <h3>You're on the list.</h3>
-          <p id="successMsg">Welcome to Cohort 2026. We read every application personally. Expect to hear from us within 48 hours — from a real human, not an auto-reply.</p>
+          <div class="seat-num" id="seatNumberLabel">Seat #—</div>
+          <p>Welcome to Cohort 2026. We read every application personally. Expect to hear from us within 48 hours — from a real human, not an auto-reply.</p>
+          <div class="share-row">
+            <a class="share-btn" id="shareTwitter" href="#" target="_blank" rel="noopener">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.8a8.5 8.5 0 0 1-2.4.7 4.2 4.2 0 0 0 1.8-2.3 8.4 8.4 0 0 1-2.6 1 4.2 4.2 0 0 0-7.2 3.8A12 12 0 0 1 3 4.8a4.2 4.2 0 0 0 1.3 5.6A4.2 4.2 0 0 1 2.4 10v.1a4.2 4.2 0 0 0 3.4 4.1 4.2 4.2 0 0 1-1.9.1 4.2 4.2 0 0 0 4 2.9A8.5 8.5 0 0 1 2 18.9a12 12 0 0 0 6.5 1.9c7.8 0 12-6.5 12-12.1v-.5A8.5 8.5 0 0 0 22 5.8z"/></svg>
+              Share on X
+            </a>
+            <a class="share-btn" id="shareWa" href="#" target="_blank" rel="noopener">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1.1-.2.2-.3.2-.5.1-.3-.1-1.2-.4-2.3-1.4-.8-.8-1.4-1.7-1.6-2-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.7-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2 0 1.3 1 2.6 1.1 2.8.1.2 1.9 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.2.1-1.3-.1-.1-.3-.2-.6-.3zM12 2A10 10 0 0 0 3.5 17.2L2 22l4.9-1.5A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.9.9.9-2.8-.2-.3A8 8 0 1 1 12 20z"/></svg>
+              Share on WhatsApp
+            </a>
+            <a class="share-btn" id="shareLi" href="#" target="_blank" rel="noopener">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zM8.3 18.3v-7.5H5.8v7.5h2.5zM7 9.7a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm11.3 8.6v-4.1c0-2.2-1.2-3.2-2.7-3.2-1.3 0-1.9.7-2.2 1.2v-1h-2.5v7.5h2.5v-4.2c0-.7.5-1.4 1.4-1.4s1.3.6 1.3 1.4v4.3h2.2z"/></svg>
+              Share on LinkedIn
+            </a>
+          </div>
         </div>
       </div>
     </div>
   </section>
+
+  <canvas id="confetti"></canvas>
 
   <!-- ========== FOOTER ========== -->
   <footer>
@@ -906,10 +1259,7 @@
         <div>
           <div class="foot-brand">
             <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M16 28a16 16 0 0 1 32 0v22l-6-5-5 5-5-5-5 5-5-5-6 5z"/>
-              <circle cx="24" cy="30" r="2.5" fill="currentColor"/>
-              <circle cx="40" cy="30" r="2.5" fill="currentColor"/>
-              <path d="M24 40c2 2 6 2 8 0"/>
+              <path d="M16 28a16 16 0 0 1 32 0v22l-6-5-5 5-5-5-5 5-5-5-6 5z"/><circle cx="24" cy="30" r="2.5" fill="currentColor"/><circle cx="40" cy="30" r="2.5" fill="currentColor"/><path d="M24 40c2 2 6 2 8 0"/>
             </svg>
             unGhost
           </div>
@@ -918,10 +1268,10 @@
         <div>
           <div class="foot-h">Navigate</div>
           <ul>
+            <li><a href="#funnel">The funnel</a></li>
             <li><a href="#how">How it works</a></li>
             <li><a href="#tracks">Tracks</a></li>
-            <li><a href="#why-students">For students</a></li>
-            <li><a href="#why-companies">For companies</a></li>
+            <li><a href="#faq">FAQ</a></li>
             <li><a href="#register">Apply</a></li>
           </ul>
         </div>
@@ -942,80 +1292,142 @@
   </footer>
 
   <script>
-    // ========== SCROLL REVEAL ==========
+    // =====================================================================
+    // SCROLL REVEAL + PROGRESS BAR
+    // =====================================================================
     const io = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         if (e.isIntersecting) {
           e.target.classList.add('in');
-          // trigger nested chip animations on Answer section
-          if (e.target.id === 'answerChips') {
-            [...e.target.children].forEach((c) => c.classList.add('in'));
-          }
-          // counters
+          if (e.target.id === 'answerChips') [...e.target.children].forEach((c) => c.classList.add('in'));
           if (e.target.classList.contains('num-card')) {
             const cnt = e.target.querySelector('.cnt');
             if (cnt && !cnt.dataset.done) animateCounter(cnt);
           }
+          if (e.target.id === 'funnelSvg') e.target.classList.add('in');
         }
       });
     }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-
     document.querySelectorAll('.reveal, .reveal-l, .reveal-r, .reveal-scale').forEach((el) => io.observe(el));
     const answerChips = document.getElementById('answerChips');
     if (answerChips) io.observe(answerChips);
+    const funnelSvg = document.getElementById('funnelSvg');
+    if (funnelSvg) io.observe(funnelSvg);
 
-    // ========== COUNTER ANIMATION ==========
     function animateCounter(el) {
       el.dataset.done = '1';
       const target = Number(el.dataset.target);
       const display = el.dataset.display;
-      if (display && target === 5000) {
-        // 4–5k case — quick reveal
-        let n = 0;
-        const dur = 1400, t0 = performance.now();
-        const tick = (t) => {
-          const p = Math.min(1, (t - t0) / dur);
-          const eased = 1 - Math.pow(1 - p, 3);
-          n = Math.floor(eased * 5000);
-          if (n >= 5000) { el.textContent = '4–5k'; return; }
-          el.textContent = (n / 1000).toFixed(1) + 'k';
-          requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-        return;
-      }
-      const dur = 1600, t0 = performance.now();
+      const dur = 1500, t0 = performance.now();
       const tick = (t) => {
         const p = Math.min(1, (t - t0) / dur);
         const eased = 1 - Math.pow(1 - p, 3);
-        const val = Math.floor(eased * target);
-        el.textContent = val.toLocaleString('en-IN');
+        if (display === '4–5k') {
+          const n = Math.floor(eased * 5000);
+          if (n >= 5000) el.textContent = '4–5k';
+          else el.textContent = (n / 1000).toFixed(1) + 'k';
+        } else {
+          const val = Math.floor(eased * target);
+          el.textContent = val.toLocaleString('en-IN');
+        }
         if (p < 1) requestAnimationFrame(tick);
-        else el.textContent = target.toLocaleString('en-IN');
+        else el.textContent = display || target.toLocaleString('en-IN');
       };
       requestAnimationFrame(tick);
     }
 
-    // ========== NAV SCROLL STATE ==========
-    const nav = document.getElementById('nav');
+    const progressBar = document.getElementById('progressBar');
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 30) nav.classList.add('scrolled'); else nav.classList.remove('scrolled');
+      const doc = document.documentElement;
+      const max = (doc.scrollHeight - doc.clientHeight) || 1;
+      progressBar.style.width = ((window.scrollY / max) * 100) + '%';
     }, { passive: true });
 
-    // ========== HERO MOUSE PARALLAX (ghost) ==========
-    const ghost = document.getElementById('heroGhost');
-    if (ghost) {
-      const hero = document.querySelector('.hero');
-      hero.addEventListener('mousemove', (e) => {
-        const r = hero.getBoundingClientRect();
-        const x = (e.clientX - r.left - r.width / 2) / r.width;
-        const y = (e.clientY - r.top - r.height / 2) / r.height;
-        ghost.style.transform = `translate(${x * 30}px, ${y * 30}px) rotate(${x * 6}deg)`;
-      });
-      hero.addEventListener('mouseleave', () => { ghost.style.transform = ''; });
-    }
+    // =====================================================================
+    // NAV
+    // =====================================================================
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 30);
+    }, { passive: true });
 
-    // ========== HERO PARTICLES (canvas) ==========
+    const burger = document.getElementById('navBurger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    burger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+    function closeMenu() { mobileMenu.classList.remove('open'); }
+    window.closeMenu = closeMenu;
+
+    // =====================================================================
+    // HERO GHOST — interactive eyes, blink, CTA reaction
+    // =====================================================================
+    const ghost = document.getElementById('heroGhost');
+    const hero = document.querySelector('.hero');
+    const pupilL = ghost.querySelector('.pupil-l');
+    const pupilR = ghost.querySelector('.pupil-r');
+
+    function updateEyes(clientX, clientY) {
+      if (!ghost) return;
+      const heroR = hero.getBoundingClientRect();
+      const ghostR = ghost.getBoundingClientRect();
+      // Eye centers in viewport space (SVG viewBox 200, eyes at x=78,122 y=92)
+      const eyes = [
+        { el: pupilL, cx: ghostR.left + ghostR.width * (78 / 200), cy: ghostR.top + ghostR.height * (92 / 200) },
+        { el: pupilR, cx: ghostR.left + ghostR.width * (122 / 200), cy: ghostR.top + ghostR.height * (92 / 200) },
+      ];
+      eyes.forEach(({ el, cx, cy }) => {
+        const dx = clientX - cx, dy = clientY - cy;
+        const dist = Math.hypot(dx, dy) || 1;
+        // Max travel = 4px in SVG units (eye radius - pupil radius - 1)
+        const max = 5;
+        const tx = (dx / dist) * Math.min(max, dist / 25);
+        const ty = (dy / dist) * Math.min(max, dist / 25);
+        el.setAttribute('transform', `translate(${tx},${ty})`);
+      });
+      // Subtle whole-body parallax
+      const px = (clientX - heroR.left - heroR.width / 2) / heroR.width;
+      const py = (clientY - heroR.top - heroR.height / 2) / heroR.height;
+      ghost.style.transform = `translate(${px * 20}px, ${py * 18}px) rotate(${px * 3}deg)`;
+    }
+    hero.addEventListener('mousemove', (e) => updateEyes(e.clientX, e.clientY));
+    hero.addEventListener('mouseleave', () => {
+      pupilL.removeAttribute('transform');
+      pupilR.removeAttribute('transform');
+      ghost.style.transform = '';
+    });
+
+    // Idle blink every 4-7s
+    function scheduleBlink() {
+      const delay = 4000 + Math.random() * 3000;
+      setTimeout(() => {
+        ghost.classList.add('blink');
+        setTimeout(() => ghost.classList.remove('blink'), 140);
+        scheduleBlink();
+      }, delay);
+    }
+    scheduleBlink();
+
+    // Grin when hovering CTAs
+    ['ctaPrimary', 'ctaGhost'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('mouseenter', () => ghost.classList.add('grin'));
+      el.addEventListener('mouseleave', () => ghost.classList.remove('grin'));
+    });
+
+    // Peek ghost cycle: wait 4s → show for 5s → hide for 4s → loop forever
+    const peek = document.getElementById('heroPeek');
+    function peekCycle() {
+      peek.classList.add('show');
+      setTimeout(() => {
+        peek.classList.remove('show');
+        setTimeout(peekCycle, 4000);
+      }, 5000);
+    }
+    setTimeout(peekCycle, 4000);
+
+    // =====================================================================
+    // HERO PARTICLES
+    // =====================================================================
     (function particles() {
       const canvas = document.getElementById('particles');
       if (!canvas) return;
@@ -1032,8 +1444,7 @@
         const count = Math.min(60, Math.floor(w * h / 18000));
         for (let i = 0; i < count; i++) {
           dots.push({
-            x: Math.random() * w,
-            y: Math.random() * h,
+            x: Math.random() * w, y: Math.random() * h,
             r: 1 + Math.random() * 2.4,
             vy: 0.15 + Math.random() * 0.5,
             vx: (Math.random() - 0.5) * 0.2,
@@ -1058,7 +1469,9 @@
       window.addEventListener('resize', () => { resize(); init(); });
     })();
 
-    // ========== TRACK CARDS — 3D TILT ==========
+    // =====================================================================
+    // TRACK CARDS — 3D TILT
+    // =====================================================================
     document.querySelectorAll('.track-card').forEach((card) => {
       card.addEventListener('mousemove', (e) => {
         const r = card.getBoundingClientRect();
@@ -1073,48 +1486,204 @@
       card.addEventListener('mouseleave', () => { card.style.transform = ''; });
     });
 
-    // ========== FORM SUBMISSION ==========
+    // =====================================================================
+    // FAQ ACCORDION
+    // =====================================================================
+    document.querySelectorAll('.faq-item').forEach((item) => {
+      const q = item.querySelector('.faq-q');
+      const a = item.querySelector('.faq-a');
+      q.addEventListener('click', () => {
+        const open = item.classList.contains('open');
+        // Close all others
+        document.querySelectorAll('.faq-item').forEach(other => {
+          if (other !== item) {
+            other.classList.remove('open');
+            other.querySelector('.faq-a').style.maxHeight = '';
+          }
+        });
+        if (open) {
+          item.classList.remove('open');
+          a.style.maxHeight = '';
+        } else {
+          item.classList.add('open');
+          a.style.maxHeight = a.scrollHeight + 'px';
+        }
+      });
+    });
+
+    // =====================================================================
+    // LIVE SEAT COUNTER
+    // =====================================================================
+    let lastSeats = null;
+    async function fetchSeats() {
+      try {
+        const res = await fetch('/api/seats', { credentials: 'same-origin' });
+        if (!res.ok) return;
+        const d = await res.json();
+        const left = d.left;
+        const heroEl = document.getElementById('seatsLeftHero');
+        const formEl = document.getElementById('seatsLeftForm');
+        const heroSeatsBar = document.getElementById('heroSeats');
+
+        [heroEl, formEl].forEach(el => {
+          if (!el) return;
+          if (lastSeats !== null && left !== lastSeats) {
+            el.classList.remove('tick');
+            void el.offsetWidth; // restart animation
+            el.classList.add('tick');
+          }
+          el.textContent = left;
+        });
+        // Visual warning when nearly closed
+        if (heroSeatsBar) heroSeatsBar.classList.toggle('warning', left < 50);
+        lastSeats = left;
+      } catch (e) { /* silent */ }
+    }
+    fetchSeats();
+    setInterval(fetchSeats, 30000);
+
+    // =====================================================================
+    // MULTI-STEP FORM
+    // =====================================================================
     const form = document.getElementById('regForm');
+    const panels = form.querySelectorAll('.step-panel');
+    const stepMeta = document.getElementById('stepMeta');
+    const progBar = document.getElementById('progBar');
     const submitBtn = document.getElementById('submitBtn');
     const formMsg = document.getElementById('formMsg');
     const successState = document.getElementById('successState');
+    const stepLabels = ['', 'You', 'Background', 'Drive'];
 
-    function setFieldError(field, hasError) {
-      const wrap = field.closest('.field');
-      if (wrap) wrap.classList.toggle('err', hasError);
+    const FIELDS_PER_STEP = {
+      1: ['name', 'email', 'phone', 'city'],
+      2: ['college', 'study_year', 'track'],
+      3: ['motivation'],
+    };
+
+    let currentStep = 1;
+
+    function showStep(n) {
+      currentStep = n;
+      panels.forEach((p) => p.classList.toggle('active', Number(p.dataset.step) === n));
+      stepMeta.textContent = `Step ${n} of 3 · ${stepLabels[n]}`;
+      progBar.style.width = (n / 3 * 100) + '%';
+      // Focus first input of the new step
+      const firstInput = document.querySelector(`.step-panel[data-step="${n}"] input, .step-panel[data-step="${n}"] select, .step-panel[data-step="${n}"] textarea`);
+      if (firstInput) setTimeout(() => firstInput.focus(), 200);
     }
 
+    function setFieldErr(name, isErr) {
+      const el = form.querySelector(`[name="${name}"]`);
+      if (el) el.closest('.field').classList.toggle('err', isErr);
+    }
+    function setFieldOk(name, isOk) {
+      const el = form.querySelector(`[name="${name}"]`);
+      if (el) el.closest('.field').classList.toggle('ok', isOk);
+    }
+
+    function validateField(name) {
+      const el = form.querySelector(`[name="${name}"]`);
+      if (!el) return true;
+      const v = (el.value || '').trim();
+      let ok = true;
+      if (!v) ok = false;
+      if (name === 'email') ok = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v);
+      if (name === 'phone') ok = /^[\d\s+()\-]{7,25}$/.test(v);
+      if (name === 'motivation') ok = v.length >= 50;
+      if (['portfolio_url', 'linkedin_url', 'github_url'].includes(name)) {
+        ok = !v || /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(v);
+      }
+      return ok;
+    }
+
+    function validateStep(n) {
+      const fields = FIELDS_PER_STEP[n] || [];
+      let allOk = true;
+      fields.forEach((name) => {
+        const ok = validateField(name);
+        setFieldErr(name, !ok);
+        setFieldOk(name, ok);
+        if (!ok) allOk = false;
+      });
+      return allOk;
+    }
+
+    // Live validation + ok state
     form.addEventListener('input', (e) => {
-      if (e.target.matches('input, select, textarea')) setFieldError(e.target, false);
+      const t = e.target;
+      if (!t.name) return;
+      // Clear errors as user types; set ok if valid
+      const ok = validateField(t.name);
+      setFieldErr(t.name, false);
+      setFieldOk(t.name, ok && !!t.value.trim());
+      if (t.name === 'motivation') {
+        const v = t.value.trim().length;
+        const c = document.getElementById('motivCount');
+        if (c) c.textContent = `${v} / 50`;
+      }
+      saveDraft();
     });
 
+    form.querySelectorAll('.btn-next').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const to = Number(btn.dataset.to);
+        if (validateStep(currentStep)) showStep(to);
+      });
+    });
+    form.querySelectorAll('.btn-back').forEach((btn) => {
+      btn.addEventListener('click', () => showStep(Number(btn.dataset.to)));
+    });
+
+    // localStorage save/restore
+    const DRAFT_KEY = 'ug_form_draft_v1';
+    function saveDraft() {
+      const data = Object.fromEntries(new FormData(form).entries());
+      try { localStorage.setItem(DRAFT_KEY, JSON.stringify(data)); } catch (e) {}
+    }
+    function loadDraft() {
+      try {
+        const raw = localStorage.getItem(DRAFT_KEY);
+        if (!raw) return false;
+        const data = JSON.parse(raw);
+        let any = false;
+        Object.entries(data).forEach(([k, v]) => {
+          const el = form.querySelector(`[name="${k}"]`);
+          if (el && v) { el.value = v; any = true; }
+        });
+        if (any) {
+          // Update motivation counter
+          const motiv = form.querySelector('#motivation');
+          const c = document.getElementById('motivCount');
+          if (motiv && c) c.textContent = `${motiv.value.trim().length} / 50`;
+        }
+        return any;
+      } catch (e) { return false; }
+    }
+    loadDraft();
+
+    // Form submit
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      formMsg.classList.remove('show');
-      formMsg.textContent = '';
+      formMsg.classList.remove('show'); formMsg.textContent = '';
 
-      // basic client-side validation
-      let firstInvalid = null;
-      const fields = form.querySelectorAll('input, select, textarea');
-      fields.forEach((f) => {
-        const valid = f.checkValidity();
-        setFieldError(f, !valid);
-        if (!valid && !firstInvalid) firstInvalid = f;
+      if (!validateStep(1)) { showStep(1); return; }
+      if (!validateStep(2)) { showStep(2); return; }
+      if (!validateStep(3)) { showStep(3); formMsg.textContent = 'Please complete the motivation field (min 50 chars).'; formMsg.classList.add('show'); return; }
+
+      // Check optional URL fields
+      let urlOk = true;
+      ['portfolio_url', 'linkedin_url', 'github_url'].forEach((n) => {
+        const ok = validateField(n);
+        setFieldErr(n, !ok);
+        if (!ok) urlOk = false;
       });
-      const motivation = form.querySelector('#motivation');
-      if (motivation.value.trim().length < 50) {
-        setFieldError(motivation, true);
-        if (!firstInvalid) firstInvalid = motivation;
-      }
-      if (firstInvalid) {
-        firstInvalid.focus();
-        formMsg.textContent = 'Please check the highlighted fields.';
+      if (!urlOk) {
+        formMsg.textContent = 'One of your URLs looks invalid. Should start with https://';
         formMsg.classList.add('show');
         return;
       }
 
       const payload = Object.fromEntries(new FormData(form).entries());
-
       submitBtn.classList.add('loading');
       submitBtn.disabled = true;
 
@@ -1129,7 +1698,12 @@
         if (res.ok && data.success) {
           form.style.display = 'none';
           successState.classList.add('show');
-          successState.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const seatNum = data.seatNumber || '—';
+          document.getElementById('seatNumberLabel').textContent = `Seat #${seatNum} of 500`;
+          buildShareLinks(seatNum);
+          fireConfetti();
+          try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+          fetchSeats();
         } else {
           formMsg.textContent = (data.errors && data.errors[0]) || 'Something went wrong. Please try again.';
           formMsg.classList.add('show');
@@ -1142,6 +1716,67 @@
         submitBtn.disabled = false;
       }
     });
+
+    function buildShareLinks(seatNum) {
+      const text = `I just claimed seat #${seatNum} in Cohort 2026 at @unGhost — a curated hiring community. We don't ghost. We unghost. 👻`;
+      const url = window.location.origin;
+      document.getElementById('shareTwitter').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+      document.getElementById('shareWa').href = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
+      document.getElementById('shareLi').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+    }
+
+    // =====================================================================
+    // CONFETTI (vanilla canvas)
+    // =====================================================================
+    function fireConfetti() {
+      const canvas = document.getElementById('confetti');
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      function size() { canvas.width = window.innerWidth * dpr; canvas.height = window.innerHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+      size();
+      const colors = ['#1B9EFF', '#7FCBFF', '#0A6FCC', '#FFFFFF', '#7CFFB2', '#FFB37C'];
+      const pieces = [];
+      const N = 140;
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight * 0.35;
+      for (let i = 0; i < N; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 4 + Math.random() * 9;
+        pieces.push({
+          x: cx, y: cy,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 4,
+          g: 0.15 + Math.random() * 0.1,
+          size: 5 + Math.random() * 6,
+          rot: Math.random() * Math.PI,
+          vrot: (Math.random() - 0.5) * 0.3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+        });
+      }
+      let frames = 0;
+      function step() {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        pieces.forEach((p) => {
+          p.vy += p.g;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vrot;
+          p.alpha = Math.max(0, 1 - frames / 130);
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+          ctx.restore();
+        });
+        frames++;
+        if (frames < 160) requestAnimationFrame(step);
+        else ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      }
+      step();
+    }
   </script>
 </body>
 </html>

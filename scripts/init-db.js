@@ -1,5 +1,6 @@
-// One-shot script to create the registrations table in Neon.
-// Run: node scripts/init-db.js (loads DATABASE_URL from .env.local)
+// One-shot script to create / migrate the registrations table in Neon.
+// Idempotent — safe to run multiple times.
+// Run: node scripts/init-db.js
 
 const fs = require('fs');
 const path = require('path');
@@ -37,12 +38,17 @@ const { sql } = require('../lib/db');
       )
     `;
     await sql`CREATE UNIQUE INDEX IF NOT EXISTS idx_registrations_email ON registrations (LOWER(email))`;
+
+    console.log('→ Migrating: adding optional portfolio / linkedin / github columns…');
+    await sql`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS portfolio_url TEXT`;
+    await sql`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS linkedin_url TEXT`;
+    await sql`ALTER TABLE registrations ADD COLUMN IF NOT EXISTS github_url   TEXT`;
     console.log('  Table ready.');
 
     const count = await sql`SELECT COUNT(*)::int AS n FROM registrations`;
     console.log(`→ Current row count: ${count[0].n}`);
 
-    console.log('\n✓ Database initialised successfully.\n');
+    console.log('\n✓ Database initialised / migrated successfully.\n');
     process.exit(0);
   } catch (e) {
     console.error('\n✗ Init failed:\n', e);

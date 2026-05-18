@@ -3,6 +3,8 @@
 const { sql } = require('../lib/db');
 const { validateRegistration } = require('../lib/validate');
 
+const ALREADY_FILLED = 316;
+const CAPACITY = 500;
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
@@ -25,14 +27,20 @@ module.exports = async (req, res) => {
     track: String(body.track),
     study_year: String(body.study_year),
     motivation: String(body.motivation).trim(),
+    portfolio_url: body.portfolio_url ? String(body.portfolio_url).trim() : null,
+    linkedin_url: body.linkedin_url ? String(body.linkedin_url).trim() : null,
+    github_url: body.github_url ? String(body.github_url).trim() : null,
   };
 
   try {
     await sql`
-      INSERT INTO registrations (name, email, phone, college, city, track, study_year, motivation)
-      VALUES (${row.name}, ${row.email}, ${row.phone}, ${row.college}, ${row.city}, ${row.track}, ${row.study_year}, ${row.motivation})
+      INSERT INTO registrations (name, email, phone, college, city, track, study_year, motivation, portfolio_url, linkedin_url, github_url)
+      VALUES (${row.name}, ${row.email}, ${row.phone}, ${row.college}, ${row.city}, ${row.track}, ${row.study_year}, ${row.motivation}, ${row.portfolio_url}, ${row.linkedin_url}, ${row.github_url})
     `;
-    return res.status(200).json({ success: true });
+    const count = await sql`SELECT COUNT(*)::int AS n FROM registrations`;
+    const seatsLeft = Math.max(0, CAPACITY - ALREADY_FILLED - count[0].n);
+    const seatNumber = ALREADY_FILLED + count[0].n;
+    return res.status(200).json({ success: true, seatsLeft, seatNumber });
   } catch (e) {
     const msg = String(e && e.message || e);
     if (msg.includes('idx_registrations_email') || msg.toLowerCase().includes('unique')) {
