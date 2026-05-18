@@ -1,0 +1,17 @@
+{
+  "name": "unghost-landing",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Unghost — a curated hiring community. Vercel serverless + Neon Postgres.",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod",
+    "db:init": "node scripts/init-db.js"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

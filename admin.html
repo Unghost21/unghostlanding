@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Dashboard · unGhost</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{margin:0;padding:0;font-family:'Inter',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;color:#fff;background:#0a3a6e}
+    body{
+      min-height:100vh;
+      background:radial-gradient(1400px 700px at 15% -10%,#1B9EFF 0%,#0A6FCC 35%,#0a3a6e 70%,#0d1117 100%);
+      background-attachment:fixed;
+    }
+    body::before,body::after{content:"";position:fixed;border-radius:50%;filter:blur(90px);opacity:.4;pointer-events:none;z-index:0}
+    body::before{width:520px;height:520px;background:#1B9EFF;top:-100px;right:-80px;animation:float 18s ease-in-out infinite}
+    body::after{width:460px;height:460px;background:#0A6FCC;bottom:-120px;left:-100px;animation:float 22s ease-in-out infinite reverse}
+    @keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,-50px)}}
+
+    .glass{
+      background:rgba(255,255,255,0.08);
+      backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+      border:1px solid rgba(255,255,255,0.18);
+      box-shadow:0 20px 50px rgba(0,0,0,.25);
+      border-radius:20px;
+    }
+
+    /* ==== LOGIN GATE ==== */
+    .gate{position:relative;z-index:2;min-height:100vh;display:grid;place-items:center;padding:24px}
+    .gate-card{width:min(420px,100%);padding:36px 32px}
+    .gate-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;margin-bottom:6px}
+    .gate-logo svg{width:32px;height:32px;color:#7FCBFF}
+    .gate-card h1{font-size:22px;margin:18px 0 6px;font-weight:700}
+    .gate-card p.sub{margin:0 0 20px;color:rgba(255,255,255,.75);font-size:14px}
+    .gate-card label{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:8px}
+    .gate-card input[type=password]{
+      width:100%;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.2);
+      background:rgba(255,255,255,.06);color:#fff;font-size:15px;outline:none;transition:.2s;
+    }
+    .gate-card input[type=password]:focus{border-color:#7FCBFF;box-shadow:0 0 0 3px rgba(127,203,255,.22)}
+    .gate-card button{
+      margin-top:18px;width:100%;padding:14px 16px;border:0;border-radius:12px;cursor:pointer;
+      background:linear-gradient(135deg,#1B9EFF,#0A6FCC);color:#fff;font-weight:600;font-size:15px;
+      box-shadow:0 8px 24px rgba(27,158,255,.4);transition:transform .15s;
+    }
+    .gate-card button:hover{transform:translateY(-2px)}
+    .gate-card button:disabled{opacity:.7;cursor:wait}
+    .gate-err{margin-top:14px;padding:10px 14px;border-radius:10px;background:rgba(255,80,80,.15);border:1px solid rgba(255,80,80,.35);color:#ffdcdc;font-size:13px;display:none}
+    .gate-err.show{display:block}
+    .gate-card a{color:rgba(255,255,255,.75);font-size:12px;text-decoration:none;margin-top:18px;display:inline-block}
+    .gate-card a:hover{color:#fff}
+
+    /* ==== DASHBOARD ==== */
+    header.topbar{
+      position:relative;z-index:2;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+      background:rgba(13,17,23,0.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(255,255,255,.1);
+    }
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:18px}
+    .brand svg{width:32px;height:32px;color:#7FCBFF}
+    .brand .pill{margin-left:8px;padding:4px 10px;border-radius:999px;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.18em;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18)}
+    .actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .btn{
+      padding:10px 16px;border-radius:10px;border:0;font-weight:600;font-size:13.5px;cursor:pointer;
+      transition:transform .15s,box-shadow .2s;display:inline-flex;align-items:center;gap:8px;
+    }
+    .btn-csv{background:linear-gradient(135deg,#7CFFB2,#3BC97A);color:#04331a;box-shadow:0 8px 20px rgba(60,201,122,.35)}
+    .btn-csv:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(60,201,122,.45)}
+    .btn-ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.18)}
+    .btn-ghost:hover{background:rgba(255,255,255,.16)}
+
+    main{position:relative;z-index:2;max-width:1280px;margin:0 auto;padding:32px 28px 80px}
+
+    .grid-stats{display:grid;grid-template-columns:1.4fr 1fr;gap:22px;margin-bottom:28px}
+    @media (max-width:880px){.grid-stats{grid-template-columns:1fr}}
+    .stat-card{padding:28px}
+    .stat-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:rgba(255,255,255,.6);text-transform:uppercase;margin-bottom:14px}
+    .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .stat{padding:18px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1)}
+    .stat .v{font-size:36px;font-weight:800;line-height:1;background:linear-gradient(135deg,#fff,#BFE3FF);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .stat .l{margin-top:8px;font-size:12.5px;color:rgba(255,255,255,.72)}
+
+    .progress{margin-top:22px}
+    .progress-track{height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid rgba(255,255,255,.12)}
+    .progress-bar{height:100%;background:linear-gradient(90deg,#1B9EFF,#7FCBFF);border-radius:999px;transition:width 1s cubic-bezier(.2,.7,.2,1)}
+    .progress-meta{display:flex;justify-content:space-between;margin-top:10px;font-size:12.5px;color:rgba(255,255,255,.72)}
+
+    .track-bars{padding:28px}
+    .bar-row{display:grid;grid-template-columns:120px 1fr 40px;align-items:center;gap:14px;margin-top:14px;font-size:13px}
+    .bar-row .name{color:rgba(255,255,255,.85);font-weight:500}
+    .bar{height:10px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid rgba(255,255,255,.12)}
+    .bar-fill{height:100%;background:linear-gradient(90deg,#1B9EFF,#7FCBFF);border-radius:999px;transition:width .9s cubic-bezier(.2,.7,.2,1);width:0}
+    .bar-row .n{text-align:right;color:rgba(255,255,255,.7);font-family:'JetBrains Mono',monospace}
+
+    .toolbar{margin-top:8px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+    .search{
+      flex:1;min-width:220px;padding:11px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.06);color:#fff;font-size:14px;outline:none;transition:.2s;
+    }
+    .search::placeholder{color:rgba(255,255,255,.5)}
+    .search:focus{border-color:#7FCBFF;box-shadow:0 0 0 3px rgba(127,203,255,.22)}
+    .toolbar .meta{font-size:13px;color:rgba(255,255,255,.65);font-family:'JetBrains Mono',monospace}
+
+    .table-wrap{margin-top:18px;padding:6px;overflow:hidden}
+    .table-scroll{overflow-x:auto;border-radius:14px}
+    table{width:100%;border-collapse:collapse;font-size:13.5px}
+    thead th{
+      position:sticky;top:0;text-align:left;font-weight:600;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+      color:rgba(255,255,255,.6);padding:14px 16px;background:rgba(13,17,23,.55);border-bottom:1px solid rgba(255,255,255,.1);
+      cursor:pointer;user-select:none;white-space:nowrap;
+    }
+    thead th:hover{color:#fff}
+    tbody td{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.88);vertical-align:top}
+    tbody tr{transition:.18s}
+    tbody tr:hover{background:rgba(255,255,255,.04)}
+    .tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600;background:rgba(27,158,255,.18);color:#BFE3FF;border:1px solid rgba(127,203,255,.3)}
+    .mute{color:rgba(255,255,255,.55);font-size:12.5px}
+    .motiv{max-width:340px;color:rgba(255,255,255,.78);font-size:13px;line-height:1.5;white-space:pre-wrap}
+
+    .empty{padding:60px 30px;text-align:center;color:rgba(255,255,255,.6)}
+    .empty h3{color:#fff;margin:0 0 10px}
+    .empty p{margin:0;font-size:14px}
+
+    .loading-wrap{padding:50px;text-align:center;color:rgba(255,255,255,.6)}
+    .spin{width:30px;height:30px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:#7FCBFF;animation:spin .9s linear infinite;margin:0 auto 14px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .hidden{display:none !important}
+  </style>
+</head>
+<body>
+
+  <!-- ========== LOGIN GATE (shown when not authed) ========== -->
+  <div class="gate hidden" id="gate">
+    <form class="gate-card glass" id="loginForm" autocomplete="off">
+      <div class="gate-logo">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 28a16 16 0 0 1 32 0v22l-6-5-5 5-5-5-5 5-5-5-6 5z"/>
+          <circle cx="24" cy="30" r="2.5" fill="currentColor"/>
+          <circle cx="40" cy="30" r="2.5" fill="currentColor"/>
+          <path d="M24 40c2 2 6 2 8 0"/>
+        </svg>
+        <span>unGhost · Admin</span>
+      </div>
+      <h1>Welcome back.</h1>
+      <p class="sub">Sign in to view cohort registrations.</p>
+      <label for="pw">Password</label>
+      <input id="pw" type="password" placeholder="••••••••••" autofocus required />
+      <button type="submit" id="loginBtn">Sign in →</button>
+      <div class="gate-err" id="gateErr"></div>
+      <a href="/">← back to landing page</a>
+    </form>
+  </div>
+
+  <!-- ========== DASHBOARD (shown when authed) ========== -->
+  <div class="dash hidden" id="dash">
+    <header class="topbar">
+      <div class="brand">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 28a16 16 0 0 1 32 0v22l-6-5-5 5-5-5-5 5-5-5-6 5z"/>
+          <circle cx="24" cy="30" r="2.5" fill="currentColor"/>
+          <circle cx="40" cy="30" r="2.5" fill="currentColor"/>
+          <path d="M24 40c2 2 6 2 8 0"/>
+        </svg>
+        <span>unGhost</span>
+        <span class="pill">ADMIN · COHORT 2026</span>
+      </div>
+      <div class="actions">
+        <a class="btn btn-ghost" href="/">← Landing</a>
+        <a class="btn btn-csv" href="/api/admin/export" id="csvBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Download CSV
+        </a>
+        <button class="btn btn-ghost" id="logoutBtn" type="button">Sign out</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="grid-stats">
+        <div class="stat-card glass">
+          <div class="stat-label">Cohort 2026 · Live Snapshot</div>
+          <div class="stat-grid">
+            <div class="stat"><div class="v" id="statTotal">—</div><div class="l">New applications via this site</div></div>
+            <div class="stat"><div class="v" id="statFilled">—</div><div class="l">Already-filled seats</div></div>
+            <div class="stat"><div class="v" id="statLeft">—</div><div class="l">Seats remaining</div></div>
+          </div>
+          <div class="progress">
+            <div class="progress-track"><div class="progress-bar" id="progBar" style="width:0%"></div></div>
+            <div class="progress-meta">
+              <span><b id="progNow">0</b> / 500 seats</span>
+              <span id="progPct">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="track-bars glass">
+          <div class="stat-label">By Track</div>
+          <div id="trackBars">
+            <div class="loading-wrap" style="padding:20px"><div class="spin"></div>Loading…</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar glass">
+        <input class="search" id="search" type="search" placeholder="Search by name, email, college, city, or track…" />
+        <div class="meta" id="rowCount">0 rows</div>
+      </div>
+
+      <div class="table-wrap glass">
+        <div class="table-scroll">
+          <table id="regTable">
+            <thead>
+              <tr>
+                <th data-key="id">#</th>
+                <th data-key="name">Name</th>
+                <th data-key="email">Email</th>
+                <th data-key="phone">Phone</th>
+                <th data-key="track">Track</th>
+                <th data-key="study_year">Year</th>
+                <th data-key="college">College</th>
+                <th data-key="city">City</th>
+                <th data-key="motivation">Motivation</th>
+                <th data-key="created_at">Applied</th>
+              </tr>
+            </thead>
+            <tbody id="tbody">
+              <tr><td colspan="10"><div class="loading-wrap"><div class="spin"></div>Loading registrations…</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ========== STATE ==========
+    let rows = [];
+    let sortKey = 'created_at';
+    let sortDir = -1;
+    let filter = '';
+
+    const $ = (id) => document.getElementById(id);
+    const gate = $('gate');
+    const dash = $('dash');
+    const loginForm = $('loginForm');
+    const pw = $('pw');
+    const loginBtn = $('loginBtn');
+    const gateErr = $('gateErr');
+
+    // ========== INITIAL AUTH CHECK ==========
+    async function init() {
+      try {
+        const res = await fetch('/api/admin/data', { credentials: 'same-origin' });
+        if (res.status === 401) {
+          showGate();
+          return;
+        }
+        if (!res.ok) {
+          showGate('Server error. Try again.');
+          return;
+        }
+        const data = await res.json();
+        showDash();
+        rows = data.rows || [];
+        renderStats(data);
+        renderTracks(data.breakdown || []);
+        render();
+      } catch (e) {
+        showGate('Network error. Check your connection.');
+      }
+    }
+
+    function showGate(errorMsg) {
+      gate.classList.remove('hidden');
+      dash.classList.add('hidden');
+      if (errorMsg) {
+        gateErr.textContent = errorMsg;
+        gateErr.classList.add('show');
+      } else {
+        gateErr.classList.remove('show');
+      }
+      setTimeout(() => pw && pw.focus(), 50);
+    }
+
+    function showDash() {
+      dash.classList.remove('hidden');
+      gate.classList.add('hidden');
+    }
+
+    // ========== LOGIN ==========
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      gateErr.classList.remove('show');
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Signing in…';
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ password: pw.value }),
+        });
+        if (res.ok) {
+          pw.value = '';
+          await init(); // reload data with new session
+        } else {
+          const data = await res.json().catch(() => ({}));
+          gateErr.textContent = (data && data.error === 'wrong password') ? 'Wrong password. Try again.' : 'Login failed. Try again.';
+          gateErr.classList.add('show');
+        }
+      } catch (e) {
+        gateErr.textContent = 'Network error. Try again.';
+        gateErr.classList.add('show');
+      } finally {
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Sign in →';
+      }
+    });
+
+    // ========== LOGOUT ==========
+    $('logoutBtn').addEventListener('click', async () => {
+      try {
+        await fetch('/api/admin/logout', { method: 'POST', credentials: 'same-origin' });
+      } catch (e) { /* ignore */ }
+      rows = [];
+      showGate();
+    });
+
+    // ========== DASHBOARD RENDER ==========
+    function renderStats(d) {
+      $('statTotal').textContent = d.total;
+      $('statFilled').textContent = d.alreadyFilled;
+      const left = Math.max(0, d.capacity - d.alreadyFilled - d.total);
+      $('statLeft').textContent = left;
+      const used = d.alreadyFilled + d.total;
+      const pct = Math.min(100, Math.round((used / d.capacity) * 100));
+      $('progBar').style.width = pct + '%';
+      $('progNow').textContent = used;
+      $('progPct').textContent = pct + '%';
+    }
+
+    function renderTracks(breakdown) {
+      const allTracks = ['Tech', 'Sales', 'Marketing', 'Social Media', 'Freelancing', 'Founders'];
+      const map = Object.fromEntries(breakdown.map(b => [b.track, b.n]));
+      const max = Math.max(1, ...allTracks.map(t => map[t] || 0));
+      const html = allTracks.map(t => {
+        const n = map[t] || 0;
+        const w = Math.round((n / max) * 100);
+        return `<div class="bar-row"><div class="name">${t}</div><div class="bar"><div class="bar-fill" style="width:${w}%"></div></div><div class="n">${n}</div></div>`;
+      }).join('');
+      $('trackBars').innerHTML = html;
+    }
+
+    function render() {
+      const tbody = $('tbody');
+      const q = filter.trim().toLowerCase();
+      let view = rows;
+      if (q) {
+        view = rows.filter(r =>
+          (r.name || '').toLowerCase().includes(q) ||
+          (r.email || '').toLowerCase().includes(q) ||
+          (r.college || '').toLowerCase().includes(q) ||
+          (r.city || '').toLowerCase().includes(q) ||
+          (r.track || '').toLowerCase().includes(q)
+        );
+      }
+      view = [...view].sort((a, b) => {
+        const va = a[sortKey], vb = b[sortKey];
+        if (va == null) return 1; if (vb == null) return -1;
+        if (typeof va === 'number' && typeof vb === 'number') return (va - vb) * sortDir;
+        return String(va).localeCompare(String(vb)) * sortDir;
+      });
+
+      $('rowCount').textContent = view.length + (view.length === 1 ? ' row' : ' rows');
+
+      if (view.length === 0) {
+        const heading = rows.length ? 'No matches.' : 'No applications yet.';
+        const body = rows.length ? 'Try a different search.' : "Once students apply on the landing page, they'll show up here.";
+        tbody.innerHTML = `<tr><td colspan="10"><div class="empty"><h3>${heading}</h3><p>${body}</p></div></td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = view.map(r => {
+        const dt = new Date(r.created_at + 'Z');
+        const when = isNaN(dt) ? r.created_at : dt.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' });
+        const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+        return `<tr>
+          <td class="mute">${r.id}</td>
+          <td><b>${esc(r.name)}</b></td>
+          <td><a style="color:#BFE3FF" href="mailto:${esc(r.email)}">${esc(r.email)}</a></td>
+          <td class="mute">${esc(r.phone)}</td>
+          <td><span class="tag">${esc(r.track)}</span></td>
+          <td class="mute">${esc(r.study_year)}</td>
+          <td>${esc(r.college)}</td>
+          <td>${esc(r.city)}</td>
+          <td><div class="motiv">${esc(r.motivation)}</div></td>
+          <td class="mute">${esc(when)}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    $('search').addEventListener('input', (e) => { filter = e.target.value; render(); });
+    document.querySelectorAll('#regTable thead th').forEach(th => {
+      th.addEventListener('click', () => {
+        const k = th.dataset.key;
+        if (sortKey === k) sortDir *= -1; else { sortKey = k; sortDir = 1; }
+        render();
+      });
+    });
+
+    init();
+  </script>
+</body>
+</html>
