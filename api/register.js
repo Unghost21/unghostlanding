@@ -3,8 +3,6 @@
 const { sql } = require('../lib/db');
 const { validateRegistration } = require('../lib/validate');
 
-const ALREADY_FILLED = 316;
-const CAPACITY = 500;
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
@@ -34,9 +32,7 @@ module.exports = async (req, res) => {
       INSERT INTO registrations (name, email, phone, college, city, track, study_year, motivation)
       VALUES (${row.name}, ${row.email}, ${row.phone}, ${row.college}, ${row.city}, ${row.track}, ${row.study_year}, ${row.motivation})
     `;
-    const count = await sql`SELECT COUNT(*)::int AS n FROM registrations`;
-    const seatsLeft = Math.max(0, CAPACITY - ALREADY_FILLED - count[0].n);
-    return res.status(200).json({ success: true, seatsLeft });
+    return res.status(200).json({ success: true });
   } catch (e) {
     const msg = String(e && e.message || e);
     if (msg.includes('idx_registrations_email') || msg.toLowerCase().includes('unique')) {
