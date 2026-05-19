@@ -777,12 +777,12 @@
     <div class="wrap">
       <div class="reveal">
         <div class="overline">03 · The Funnel</div>
-        <h2>From <span class="accent">five thousand</span> to a hand-picked few.</h2>
-        <p style="max-width:680px;font-size:17px;padding-top:18px">This is the whole model in one picture. Wide at the top — anyone can show up. Narrow at the bottom — only the people who actually do the work get introduced.</p>
+        <h2>Just <span class="accent">500 per year.</span> Hand-picked from there.</h2>
+        <p style="max-width:680px;font-size:17px;padding-top:18px">One cohort. Per year. Capped at 500 — on purpose. From there, every introduction is hand-picked: we don't forward everyone, only the people who fit the role.</p>
       </div>
       <div class="funnel-grid">
         <div class="funnel-svg-wrap">
-          <svg class="funnel-svg" id="funnelSvg" viewBox="0 0 500 520" aria-hidden="true">
+          <svg class="funnel-svg" id="funnelSvg" viewBox="0 0 500 425" aria-hidden="true">
             <defs>
               <linearGradient id="fgrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0" stop-color="#7FCBFF"/>
@@ -790,48 +790,38 @@
               </linearGradient>
               <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#1B9EFF" flood-opacity=".3"/></filter>
             </defs>
-            <!-- Layer 1: 5k workshop -->
+            <!-- Layer 1: 500 students cap -->
             <g class="funnel-layer" data-step="1" filter="url(#softShadow)">
-              <polygon class="shape" points="20,20 480,20 420,135 80,135"/>
-              <text class="funnel-label" x="250" y="65" dy=".35em">5,000</text>
-              <text class="funnel-sublabel" x="250" y="108">FREE WORKSHOP · YEAR</text>
+              <polygon class="shape" points="20,15 480,15 410,140 90,140"/>
+              <text class="funnel-label" x="250" y="62" dy=".35em" style="font-size:24px">500 students</text>
+              <text class="funnel-sublabel" x="250" y="108">PER YEAR · CAPPED</text>
             </g>
-            <!-- Layer 2: 500 bootcamp -->
+            <!-- Layer 2: 316 students already in -->
             <g class="funnel-layer" data-step="2" filter="url(#softShadow)">
-              <polygon class="shape" points="80,140 420,140 365,255 135,255"/>
-              <text class="funnel-label" x="250" y="185" dy=".35em">500</text>
-              <text class="funnel-sublabel" x="250" y="228">PAID BOOTCAMP</text>
+              <polygon class="shape" points="90,150 410,150 340,275 160,275"/>
+              <text class="funnel-label" x="250" y="197" dy=".35em" style="font-size:22px">316 students</text>
+              <text class="funnel-sublabel" x="250" y="243">ALREADY IN COHORT 2026</text>
             </g>
-            <!-- Layer 3: 316 community -->
+            <!-- Layer 3: matched -->
             <g class="funnel-layer" data-step="3" filter="url(#softShadow)">
-              <polygon class="shape" points="135,260 365,260 320,375 180,375"/>
-              <text class="funnel-label" x="250" y="305" dy=".35em">316</text>
-              <text class="funnel-sublabel" x="250" y="348">CURATED COHORT</text>
-            </g>
-            <!-- Layer 4: matched -->
-            <g class="funnel-layer" data-step="4" filter="url(#softShadow)">
-              <polygon class="shape" points="180,380 320,380 290,495 210,495"/>
-              <text class="funnel-label" x="250" y="423" dy=".35em" style="font-size:20px">Matched</text>
-              <text class="funnel-sublabel" x="250" y="465">INTROS</text>
+              <polygon class="shape" points="160,285 340,285 290,410 210,410"/>
+              <text class="funnel-label" x="250" y="335" dy=".35em" style="font-size:20px">Matched</text>
+              <text class="funnel-sublabel" x="250" y="378">HAND-PICKED</text>
             </g>
           </svg>
         </div>
         <div class="funnel-side">
           <div class="funnel-step" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
             <div class="n">01</div>
-            <div><h4>Free 2-day workshop</h4><p>Open to all students. Anyone curious shows up — no commitment.</p></div>
+            <div><h4>500 students per year</h4><p>One cohort per year. Capped at 500, on purpose. The smallness is the product, not a constraint.</p></div>
           </div>
           <div class="funnel-step" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
             <div class="n">02</div>
-            <div><h4>3-week paid bootcamp · ₹4,999</h4><p>Practitioner-led. Three capstones. Self-selected from the workshop.</p></div>
+            <div><h4>316 students already in</h4><p>Cohort 2026 is filling fast. We close the door the moment we hit 500.</p></div>
           </div>
           <div class="funnel-step" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
             <div class="n">03</div>
-            <div><h4>Curated community</h4><p>Capped at 500 per cohort. Vetted by us. The smallness is the product.</p></div>
-          </div>
-          <div class="funnel-step" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
-            <div class="n">04</div>
-            <div><h4>Personal introductions</h4><p>When a role fits, we walk your name into the hiring manager's inbox.</p></div>
+            <div><h4>Hand-picked introductions</h4><p>When a role fits a student, we walk that student's name into the hiring manager's inbox — directly.</p></div>
           </div>
         </div>
       </div>
@@ -852,7 +842,7 @@
           <div class="step-body glass-light">
             <div class="duration">2 days · Free</div>
             <h3>Free 2-day workshop</h3>
-            <p>Open to all students. AI, marketing, freelancing — taught by practitioners. About 4,000–5,000 students attend every year.</p>
+            <p>Open to all students. AI, marketing, freelancing — taught by practitioners. A wide intake to find the ones who'll show up for the work.</p>
           </div>
         </div>
         <div class="step reveal">
@@ -977,8 +967,8 @@
           <div class="num-sub">What hiring companies pay — no fees, ever</div>
         </div>
         <div class="num-card reveal-scale">
-          <div class="num"><span class="cnt" data-target="5000" data-display="4–5k">0</span></div>
-          <div class="num-sub">Students at our free workshops each year</div>
+          <div class="num"><span class="cnt" data-target="1">0</span></div>
+          <div class="num-sub">Cohort per year. Capped, on purpose.</div>
         </div>
         <div class="num-card reveal-scale">
           <div class="num"><span class="cnt" data-target="500">0</span></div>
